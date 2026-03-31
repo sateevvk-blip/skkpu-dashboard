@@ -569,6 +569,7 @@ function showPage(id){
   updateNav();
   // hide section tabs on drill-down
   document.getElementById('hdrTabs').style.display=id==='mo'?'flex':'none';
+  const mn=document.getElementById('mobNav');if(mn)mn.style.display=id==='mo'?'':'none';
   if(id==='map')setTimeout(()=>{if(map)map.invalidateSize();},80);
 }
 function updateNav(){
@@ -751,6 +752,13 @@ function renderOrg(o){
   },80);
 }
 
+// ── MOBILE NAV HELPER ──
+function moTabMob(id){
+  moTab(id);
+  document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
+  const el=document.getElementById('mnt-'+id);
+  if(el)el.classList.add('active');
+}
 // ── MO TABS ──
 function moTab(id){
   document.querySelectorAll('.hdr-tab').forEach(t=>t.classList.remove('active'));
@@ -874,22 +882,6 @@ window.addEventListener('resize',()=>{if(map)map.invalidateSize();});
     <span class="m-ico">⚠️</span>Проблемы
   </button>
 </div>
-<script>
-function moTabMob(id) {
-  moTab(id);
-  // sync mobile tabs
-  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
-  const el = document.getElementById('mnt-' + id);
-  if (el) el.classList.add('active');
-}
 
-// Show/hide mobile nav based on page
-const _origShowPage = showPage;
-function showPage(id) {
-  _origShowPage(id);
-  const mn = document.getElementById('mobNav');
-  if (mn) mn.style.display = id === 'mo' ? '' : 'none';
-}
-</script>
 </body>
 </html>
