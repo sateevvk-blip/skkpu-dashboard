@@ -140,6 +140,149 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#111827
 .btn-outline{background:#fff;border:1px solid var(--border);color:#374151}
 .btn-outline:hover{background:#f1f5f9}
 .hidden{display:none!important}
+
+/* ═══════════════════════════════════════════
+   MOBILE — iPhone 16 Pro and smaller screens
+   max-width: 430px
+   ═══════════════════════════════════════════ */
+@media (max-width: 430px) {
+  body { overflow: auto; }
+
+  /* ── Shell ── */
+  .shell { height: 100%; min-height: 100dvh; }
+
+  /* ── Header ── */
+  .hdr { padding: 0 12px; position: sticky; top: 0; z-index: 900; }
+  .hdr-top { height: auto; min-height: 52px; flex-wrap: nowrap; gap: 8px; padding: 8px 0; }
+  .logo img { height: 36px !important; }
+
+  /* Nav cards: compact pills, show only active + arrows */
+  .nav-cards { gap: 4px; overflow: hidden; flex: 1; min-width: 0; }
+  .nav-card { padding: 4px 8px; font-size: 11px; border-radius: 8px; }
+  .nav-card .nav-num { width: 16px; height: 16px; font-size: 9px; }
+  .hsp { display: none; }
+  .ver-tag { font-size: 10px; padding: 3px 7px; flex-shrink: 0; }
+
+  /* Section tabs → horizontal scroll strip */
+  .hdr-tabs { gap: 0; }
+  .hdr-tab { padding: 7px 11px; font-size: 11.5px; }
+
+  /* ── Body ── */
+  .body { flex-direction: column; }
+  .main { padding: 12px 12px 90px; } /* bottom padding for mobile nav */
+
+  /* ── Page head ── */
+  .page-head { flex-direction: column; gap: 8px; margin-bottom: 12px; align-items: flex-start; }
+  .page-title { font-size: 18px; }
+  .page-head > div:last-child { align-self: flex-end; }
+
+  /* ── KPI Grids ── */
+  .g4 { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .g2 { grid-template-columns: 1fr; gap: 10px; }
+  .g3 { grid-template-columns: 1fr; gap: 10px; }
+  .prow { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* KPI cards: compact */
+  .kpi { padding: 10px 12px; }
+  .kpi .kv { font-size: 22px; }
+  .kpi .kl { font-size: 10px; }
+  .kpi .kd { font-size: 10px; }
+
+  /* ── Cards ── */
+  .card { padding: 12px 14px; border-radius: 12px; }
+  .card-title { font-size: 12.5px; }
+  .card-sub { font-size: 11px; margin-bottom: 8px; }
+
+  /* ── Map ── */
+  #map { height: 320px; }
+
+  /* Filters and metrics: move to horizontal row below map */
+  .map-filters { flex-direction: row; flex-wrap: wrap; top: auto; bottom: 42px; left: 8px; right: auto; gap: 4px; }
+  .map-metrics { flex-direction: row; flex-wrap: wrap; top: auto; bottom: 8px; right: 8px; left: 8px; gap: 4px; }
+  .map-legend { display: none; } /* too cramped, info in filters */
+  .mf-btn { padding: 5px 9px; font-size: 10.5px; border-radius: 8px; }
+  .mf-label { display: none; }
+
+  /* ── Tables ── */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl { font-size: 11.5px; min-width: 520px; }
+  .tbl th, .tbl td { padding: 8px 10px; }
+
+  /* ── GO Banner ── */
+  .go-banner { flex-direction: column; gap: 10px; padding: 14px 16px; }
+  .go-banner .b2 { font-size: 18px; }
+
+  /* ── ORG header ── */
+  .org-hdr { padding: 14px 16px; }
+  .org-name { font-size: 16px; }
+  .org-meta { gap: 8px; font-size: 11px; }
+  .org-status { font-size: 11px; padding: 5px 10px; }
+
+  /* ── Problem cards ── */
+  .pc { padding: 10px 12px; }
+  .pc .pval { font-size: 20px; }
+  .pc h4 { font-size: 10.5px; }
+  .pc .pdesc { font-size: 10px; }
+
+  /* ── Insights ── */
+  .insight { padding: 10px 12px; }
+  .insight h4 { font-size: 12px; }
+  .insight p { font-size: 11.5px; }
+
+  /* ── Chart containers: reduce height ── */
+  [id^="ch-"] { height: 220px !important; }
+  #ch-gauge { height: 200px !important; }
+  #ch-ahr, #ch-cap { height: 260px !important; }
+
+  /* ── Tabs ── */
+  .tabs { overflow-x: auto; }
+  .tab { font-size: 12px; padding: 8px 12px; }
+
+  /* ── Buttons ── */
+  .btn { padding: 8px 12px; font-size: 12px; }
+  .page-head > div[style*="display:flex"] { flex-wrap: wrap; gap: 6px; }
+
+  /* ── Toast ── */
+  #toast { top: auto; bottom: 90px; right: 12px; left: 12px; }
+  .toast-item { max-width: 100%; }
+
+  /* ── Mobile bottom nav bar ── */
+  .mob-nav { display: flex !important; }
+}
+
+/* ── Mobile bottom nav bar (hidden on desktop) ── */
+.mob-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 58px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  z-index: 950;
+  padding: 0 8px;
+  align-items: stretch;
+  box-shadow: 0 -4px 16px rgba(15,23,42,.08);
+}
+.mob-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 6px 4px;
+  border-top: 2px solid transparent;
+  transition: all .15s;
+}
+.mob-tab .m-ico { font-size: 20px; line-height: 1; }
+.mob-tab.active { color: var(--primary); border-top-color: var(--primary); }
+
 </style>
 </head>
 <body>
@@ -235,7 +378,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#111827
       <div class="card"><div class="card-title">Достижение целевого уровня</div><div class="card-sub">74 500 ₽ = целевой уровень МО</div><div id="ch-gauge" style="height:280px"></div></div>
     </div>
     <div class="card"><div class="card-title">Рейтинг округов по средней ЗП</div><div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО</div>
-      <table class="tbl"><thead><tr><th>Округ</th><th>Ср. ЗП</th><th>Отклонение</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead><tbody id="tb-districts"></tbody></table>
+      <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Округ</th><th>Ср. ЗП</th><th>Отклонение</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead><tbody id="tb-districts"></tbody></table></div>
     </div>
   </div>
 
@@ -277,8 +420,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#111827
   <div class="card mt14">
     <div class="card-title">Организации округа</div>
     <div class="card-sub">Клик по строке → страница уровня организации</div>
-    <table class="tbl"><thead><tr><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead>
-    <tbody id="tb-orgs"></tbody></table>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead>
+    <tbody id="tb-orgs"></tbody></table></div>
   </div>
 </div><!-- /page-go -->
 
@@ -306,8 +449,8 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:#111827
   <div class="card mt14">
     <div class="card-title">Педагоги организации</div>
     <div class="card-sub">Красный фон — ЗП ниже целевого уровня</div>
-    <table class="tbl"><thead><tr><th>ФИО</th><th>Должность</th><th>Ставка</th><th>Часы</th><th>Внеурочка</th><th>Оклад</th><th>Стимул.</th><th>Итого ЗП</th><th>Статус</th></tr></thead>
-    <tbody id="tb-teachers"></tbody></table>
+    <div class="tbl-wrap"><table class="tbl"><thead><tr><th>ФИО</th><th>Должность</th><th>Ставка</th><th>Часы</th><th>Внеурочка</th><th>Оклад</th><th>Стимул.</th><th>Итого ЗП</th><th>Статус</th></tr></thead>
+    <tbody id="tb-teachers"></tbody></table></div>
   </div>
 </div><!-- /page-org -->
 
@@ -714,6 +857,39 @@ window.addEventListener('load',()=>{
   updateNav();
 });
 window.addEventListener('resize',()=>{if(map)map.invalidateSize();});
+</script>
+
+<!-- Mobile bottom nav -->
+<div class="mob-nav" id="mobNav">
+  <button class="mob-tab active" id="mnt-map" onclick="moTabMob('map')">
+    <span class="m-ico">🗺</span>Карта
+  </button>
+  <button class="mob-tab" id="mnt-sal" onclick="moTabMob('sal')">
+    <span class="m-ico">💰</span>Анализ ЗП
+  </button>
+  <button class="mob-tab" id="mnt-sub" onclick="moTabMob('sub')">
+    <span class="m-ico">📊</span>Субвенция
+  </button>
+  <button class="mob-tab" id="mnt-prb" onclick="moTabMob('prb')">
+    <span class="m-ico">⚠️</span>Проблемы
+  </button>
+</div>
+<script>
+function moTabMob(id) {
+  moTab(id);
+  // sync mobile tabs
+  document.querySelectorAll('.mob-tab').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('mnt-' + id);
+  if (el) el.classList.add('active');
+}
+
+// Show/hide mobile nav based on page
+const _origShowPage = showPage;
+function showPage(id) {
+  _origShowPage(id);
+  const mn = document.getElementById('mobNav');
+  if (mn) mn.style.display = id === 'mo' ? '' : 'none';
+}
 </script>
 </body>
 </html>
