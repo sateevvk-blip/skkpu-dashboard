@@ -1,0 +1,131 @@
+/* ═══════════════════════════════════════════
+   MOBILE — iPhone 16 Pro and smaller screens
+   max-width: 430px
+   ═══════════════════════════════════════════ */
+@media (max-width: 430px) {
+  body { overflow: auto; }
+
+  /* ── Shell ── */
+  .shell { height: 100%; min-height: 100dvh; }
+
+  /* ── Header ── */
+  .hdr { padding: 0 12px; position: sticky; top: 0; z-index: 900; }
+  .hdr-top { height: auto; min-height: 52px; flex-wrap: nowrap; gap: 8px; padding: 8px 0; }
+  .logo img { height: 36px !important; }
+
+  /* Nav cards: compact pills */
+  .nav-cards { gap: 4px; overflow: hidden; flex: 1; min-width: 0; }
+  .nav-card { padding: 4px 8px; font-size: 11px; border-radius: 8px; }
+  .nav-card .nav-num { width: 16px; height: 16px; font-size: 9px; }
+  .hsp { display: none; }
+  .ver-tag { font-size: 10px; padding: 3px 7px; flex-shrink: 0; }
+
+  /* Section tabs */
+  .hdr-tabs { gap: 0; }
+  .hdr-tab { padding: 7px 11px; font-size: 11.5px; }
+
+  /* ── Body ── */
+  .body { flex-direction: column; }
+  .main { padding: 12px 12px 90px; }
+
+  /* ── Page head ── */
+  .page-head { flex-direction: column; gap: 8px; margin-bottom: 12px; align-items: flex-start; }
+  .page-title { font-size: 18px; }
+  .page-head > div:last-child { align-self: flex-end; }
+
+  /* ── KPI Grids ── */
+  .g4 { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .g2 { grid-template-columns: 1fr; gap: 10px; }
+  .g3 { grid-template-columns: 1fr; gap: 10px; }
+  .prow { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* KPI cards */
+  .kpi { padding: 10px 12px; }
+  .kpi .kv { font-size: 22px; }
+  .kpi .kl { font-size: 10px; }
+  .kpi .kd { font-size: 10px; }
+
+  /* ── Cards ── */
+  .card { padding: 12px 14px; border-radius: 12px; }
+  .card-title { font-size: 12.5px; }
+  .card-sub { font-size: 11px; margin-bottom: 8px; }
+
+  /* ── Map ── */
+  #map { height: 320px; }
+  .map-filters { flex-direction: row; flex-wrap: wrap; top: auto; bottom: 42px; left: 8px; right: auto; gap: 4px; }
+  .map-metrics { flex-direction: row; flex-wrap: wrap; top: auto; bottom: 8px; right: 8px; left: 8px; gap: 4px; }
+  .map-legend { display: none; }
+  .mf-btn { padding: 5px 9px; font-size: 10.5px; border-radius: 8px; }
+  .mf-label { display: none; }
+
+  /* ── Tables ── */
+  .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tbl { font-size: 11.5px; min-width: 520px; }
+  .tbl th, .tbl td { padding: 8px 10px; }
+
+  /* ── GO Banner ── */
+  .go-banner { flex-direction: column; gap: 10px; padding: 14px 16px; }
+  .go-banner .b2 { font-size: 18px; }
+
+  /* ── ORG header ── */
+  .org-hdr { padding: 14px 16px; }
+  .org-name { font-size: 16px; }
+  .org-meta { gap: 8px; font-size: 11px; }
+  .org-status { font-size: 11px; padding: 5px 10px; }
+
+  /* ── Problem cards ── */
+  .pc { padding: 10px 12px; }
+  .pc .pval { font-size: 20px; }
+  .pc h4 { font-size: 10.5px; }
+  .pc .pdesc { font-size: 10px; }
+
+  /* ── Insights ── */
+  .insight { padding: 10px 12px; }
+  .insight h4 { font-size: 12px; }
+  .insight p { font-size: 11.5px; }
+
+  /* ── Chart containers ── */
+  [id^="ch-"] { height: 220px !important; }
+  #ch-gauge { height: 200px !important; }
+  #ch-ahr, #ch-cap { height: 260px !important; }
+
+  /* ── Tabs ── */
+  .tabs { overflow-x: auto; }
+  .tab { font-size: 12px; padding: 8px 12px; }
+
+  /* ── Buttons ── */
+  .btn { padding: 8px 12px; font-size: 12px; }
+  .page-head > div[style*="display:flex"] { flex-wrap: wrap; gap: 6px; }
+
+  /* ── Toast ── */
+  #toast { top: auto; bottom: 90px; right: 12px; left: 12px; }
+  .toast-item { max-width: 100%; }
+
+  /* ── Mobile bottom nav bar ── */
+  .mob-nav { display: flex !important; }
+}
+
+/* ── Mobile bottom nav bar (hidden on desktop) ── */
+.mob-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 58px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  z-index: 950;
+  padding: 0 8px;
+  align-items: stretch;
+  box-shadow: 0 -4px 16px rgba(15, 23, 42, .08);
+}
+.mob-tab {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2px; cursor: pointer; border: none; background: none;
+  color: var(--muted); font-size: 9.5px; font-weight: 600;
+  padding: 6px 4px; border-top: 2px solid transparent;
+  transition: all .15s;
+}
+.mob-tab .m-ico { font-size: 20px; line-height: 1; }
+.mob-tab.active { color: var(--primary); border-top-color: var(--primary); }

@@ -1,0 +1,41 @@
+{
+  "Лотошино": {
+    "r": "r",
+    "zp": 60800,
+    "ahr": 46,
+    "cap": 63,
+    "ext": 36,
+    "meta": "7 организаций · 284 педагога · 3 480 учащихся",
+    "orgs": [
+      { "name": "МБОУ «Средняя школа № 1»", "type": "ОО", "zp": 57200, "below": 18, "ahr": 48, "cap": 60, "r": "r", "teachers": 38, "students": 490, "classes": 18 },
+      { "name": "МБОУ «Гимназия»",           "type": "ОО", "zp": 62400, "below": 9,  "ahr": 45, "cap": 65, "r": "r", "teachers": 52, "students": 720, "classes": 26 },
+      { "name": "МБОУ «Школа № 3»",          "type": "ОО", "zp": 64700, "below": 5,  "ahr": 43, "cap": 68, "r": "y", "teachers": 41, "students": 610, "classes": 22 }
+    ]
+  },
+  "Клин": {
+    "r": "y",
+    "zp": 70200,
+    "ahr": 36,
+    "cap": 78,
+    "ext": 25,
+    "meta": "12 организаций · 621 педагог · 8 100 учащихся",
+    "orgs": [
+      { "name": "МБОУ «Лицей № 3»",    "type": "ОО", "zp": 68400, "below": 4, "ahr": 37, "cap": 76, "r": "y", "teachers": 66, "students": 1020, "classes": 38 },
+      { "name": "МБОУ «Школа № 7»",     "type": "ОО", "zp": 71600, "below": 2, "ahr": 35, "cap": 80, "r": "y", "teachers": 54, "students": 840,  "classes": 32 },
+      { "name": "МБОУ «Гимназия № 2»",  "type": "ОО", "zp": 76500, "below": 0, "ahr": 33, "cap": 83, "r": "g", "teachers": 70, "students": 1240, "classes": 44 }
+    ]
+  },
+  "Химки": {
+    "r": "g",
+    "zp": 81400,
+    "ahr": 24,
+    "cap": 94,
+    "ext": 12,
+    "meta": "18 организаций · 1 240 педагогов · 17 500 учащихся",
+    "orgs": [
+      { "name": "МБОУ «Лицей \"Горизонт\"»", "type": "ОО", "zp": 79800, "below": 0, "ahr": 25, "cap": 93, "r": "g", "teachers": 112, "students": 1840, "classes": 62 },
+      { "name": "МБОУ «Школа № 14»",          "type": "ОО", "zp": 82600, "below": 0, "ahr": 23, "cap": 95, "r": "g", "teachers": 98,  "students": 1720, "classes": 58 },
+      { "name": "МБОУ «Гимназия № 9»",         "type": "ОО", "zp": 84100, "below": 0, "ahr": 22, "cap": 96, "r": "g", "teachers": 130, "students": 2210, "classes": 72 }
+    ]
+  }
+}
