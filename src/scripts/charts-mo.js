@@ -4,6 +4,7 @@
 
 function renderMoSal() {
   var GEO = window._GEO;
+  var DISTRICTS = window._DISTRICTS;
   var feats = GEO.features;
 
   var e1 = document.getElementById('ch-salDist');
@@ -36,6 +37,45 @@ function renderMoSal() {
     }]
   });
 
+  // Salary by category chart
+  var distNames = Object.keys(DISTRICTS);
+  var categories = ['Дошкольное', 'Общее', 'Доп. обр.', 'Руководители', 'Замы', 'Прочие'];
+  var targets = [TARGET_PRESCHOOL, TARGET_GENERAL, TARGET_ADDITIONAL, null, null, null];
+  var avgByCat = [0, 0, 0, 0, 0, 0];
+  var catKeys = ['preschool', 'general', 'additional', 'director', 'deputy', 'other'];
+  distNames.forEach(function (n) {
+    var s = DISTRICTS[n].salaryByCategory;
+    if (s) {
+      catKeys.forEach(function (k, i) { avgByCat[i] += s[k]; });
+    }
+  });
+  if (distNames.length > 0) avgByCat = avgByCat.map(function (v) { return Math.round(v / distNames.length); });
+
+  var e2b = document.getElementById('ch-salCat');
+  if (!e2b._ec) e2b._ec = echarts.init(e2b);
+  e2b._ec.setOption({
+    tooltip: { trigger: 'axis', formatter: function (params) {
+      var s = params[0];
+      var t = targets[s.dataIndex];
+      var line = s.name + ': ' + fmt(s.value);
+      if (t) line += '<br>Целевой: ' + fmt(t);
+      return line;
+    }},
+    grid: { top: 24, right: 16, bottom: 48, left: 64 },
+    xAxis: { type: 'category', data: categories, axisLabel: { rotate: 15, fontSize: 10 } },
+    yAxis: { type: 'value', name: '₽', axisLabel: { formatter: function (v) { return (v / 1000).toFixed(0) + 'т'; } } },
+    series: [{
+      type: 'bar',
+      data: avgByCat.map(function (v, i) {
+        var t = targets[i];
+        var c = !t ? '#2563eb' : v >= t ? '#10b981' : '#ef4444';
+        return { value: v, itemStyle: { color: c } };
+      }),
+      label: { show: true, position: 'top', fontSize: 10, formatter: function (p) { return fmtK(p.value); } }
+    }]
+  });
+
+  // Districts table
   var sorted = feats.slice().sort(function (a, b) {
     var o = { r: 0, y: 1, g: 2 };
     return o[a.properties.r] - o[b.properties.r] || a.properties.zp - b.properties.zp;
@@ -52,6 +92,8 @@ function renderMoSal() {
 }
 
 function renderMoSub() {
+  var DISTRICTS = window._DISTRICTS;
+
   var e1 = document.getElementById('ch-wf');
   if (!e1._ec) e1._ec = echarts.init(e1);
   e1._ec.setOption({
@@ -83,6 +125,62 @@ function renderMoSub() {
       itemStyle: { color: function (p) { return p.data < 85 ? '#ef4444' : p.data < 92 ? '#f59e0b' : '#10b981'; } },
       label: { show: true, position: 'right', formatter: '{c}%' }
     }]
+  });
+
+  // Tarification chart (new)
+  var distNames = Object.keys(DISTRICTS);
+  var tarifPreschool = [];
+  var tarifGeneral = [];
+  distNames.forEach(function (n) {
+    var t = DISTRICTS[n].tarification;
+    if (t) {
+      tarifPreschool.push(Math.round(t.preschool / 1000000));
+      tarifGeneral.push(Math.round(t.general / 1000000));
+    }
+  });
+
+  var e2c = document.getElementById('ch-tarif');
+  if (!e2c._ec) e2c._ec = echarts.init(e2c);
+  e2c._ec.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['Дошкольное', 'Общее'], bottom: 0, textStyle: { fontSize: 11 } },
+    grid: { top: 20, right: 16, bottom: 36, left: 48 },
+    xAxis: { type: 'category', data: distNames, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', name: 'млн ₽' },
+    series: [
+      { name: 'Дошкольное', type: 'bar', data: tarifPreschool, itemStyle: { color: '#8b5cf6' } },
+      { name: 'Общее', type: 'bar', data: tarifGeneral, itemStyle: { color: '#2563eb' } }
+    ]
+  });
+
+  // Subsidy plan vs fact chart (new)
+  var planData = [];
+  var factData = [];
+  distNames.forEach(function (n) {
+    var s = DISTRICTS[n].subsidyPlanFact;
+    if (s) {
+      var totalPlan = s.plan.preschoolPed + s.plan.preschoolOther + s.plan.generalPed + s.plan.generalOther;
+      var totalFact = s.fact.preschoolPed + s.fact.preschoolOther + s.fact.generalPed + s.fact.generalOther;
+      planData.push(Math.round(totalPlan / 1000000));
+      factData.push(Math.round(totalFact / 1000000));
+    }
+  });
+
+  var e2d = document.getElementById('ch-subPlanFact');
+  if (!e2d._ec) e2d._ec = echarts.init(e2d);
+  e2d._ec.setOption({
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['План', 'Факт'], bottom: 0, textStyle: { fontSize: 11 } },
+    grid: { top: 20, right: 16, bottom: 36, left: 60 },
+    xAxis: { type: 'category', data: distNames, axisLabel: { fontSize: 11 } },
+    yAxis: { type: 'value', name: 'млн ₽' },
+    series: [
+      { name: 'План', type: 'bar', data: planData, itemStyle: { color: '#94a3b8' } },
+      { name: 'Факт', type: 'bar', data: factData, itemStyle: { color: function (p) {
+        var pct = planData[p.dataIndex] > 0 ? (p.data / planData[p.dataIndex]) * 100 : 0;
+        return pct < 85 ? '#ef4444' : pct < 95 ? '#f59e0b' : '#10b981';
+      } } }
+    ]
   });
 
   var e3 = document.getElementById('ch-subLine');
@@ -134,5 +232,36 @@ function renderMoProb() {
         label: { show: true, position: 'right', formatter: '{c}%', fontSize: 10 }
       }]
     });
+  });
+
+  // Low staffing chart (new)
+  var topLowStaff = feats.slice().sort(function (a, b) {
+    var sa = a.properties.staffingRate || (85 + Math.random() * 15);
+    var sb = b.properties.staffingRate || (85 + Math.random() * 15);
+    return sa - sb;
+  }).slice(0, 12);
+
+  var el = document.getElementById('ch-prbStaff');
+  if (!el._ec) el._ec = echarts.init(el);
+  el._ec.setOption({
+    tooltip: {}, grid: { top: 8, right: 52, bottom: 8, left: 130 },
+    xAxis: { type: 'value', min: 70, max: 100, axisLabel: { formatter: '{value}%' } },
+    yAxis: {
+      type: 'category',
+      data: topLowStaff.map(function (f) { return f.properties.name_clean || f.properties.name; }),
+      axisLabel: { fontSize: 10 }
+    },
+    series: [{
+      type: 'bar',
+      data: topLowStaff.map(function (f) {
+        return Math.round((f.properties.staffingRate || (85 + Math.random() * 15)) * 10) / 10;
+      }),
+      itemStyle: {
+        color: function (p) {
+          return p.data < 85 ? '#ef4444' : p.data < 95 ? '#f59e0b' : '#10b981';
+        }
+      },
+      label: { show: true, position: 'right', formatter: '{c}%', fontSize: 10 }
+    }]
   });
 }

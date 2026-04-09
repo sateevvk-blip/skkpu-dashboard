@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>СККПУ · Анализ ЗП · v1.6</title>
+<title>СККПУ · Дашборд · v2.0</title>
 
 <!-- Vendor styles -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -43,13 +43,15 @@
       </div>
     </div>
     <div class="hsp"></div>
-    <span class="ver-tag">v1.6</span>
+    <span class="ver-tag">v2.0</span>
   </div>
   <!-- Section tabs -->
   <div class="hdr-tabs" id="hdrTabs">
     <div class="hdr-tab active" id="ht-map" onclick="moTab('map')">🗺 Карта округов</div>
     <div class="hdr-tab" id="ht-sal" onclick="moTab('sal')">💰 Анализ ЗП</div>
     <div class="hdr-tab" id="ht-sub" onclick="moTab('sub')">📊 Субвенция</div>
+    <div class="hdr-tab" id="ht-hr" onclick="moTab('hr')">👥 Кадры</div>
+    <div class="hdr-tab" id="ht-bld" onclick="moTab('bld')">🏫 Здания</div>
     <div class="hdr-tab" id="ht-prb" onclick="moTab('prb')">⚠️ Проблемы</div>
   </div>
 </header>
@@ -62,7 +64,7 @@
 <div class="page active" id="page-mo">
   <div class="page-head">
     <div>
-      <div class="page-title" id="moTitle">Анализ заработных плат</div>
+      <div class="page-title" id="moTitle">СККПУ Дашборд</div>
       <div class="page-sub" id="moSub">Московская область · сводный дашборд · данные на 30.03.2026</div>
     </div>
     <span class="period">2025–2026 уч. год</span>
@@ -95,6 +97,9 @@
           <button class="mf-btn" onclick="setMetric('ahr',this)">АХР / пед.</button>
           <button class="mf-btn" onclick="setMetric('cap',this)">Комплектация</button>
           <button class="mf-btn" onclick="setMetric('ext',this)">Внеурочка</button>
+          <button class="mf-btn" onclick="setMetric('bload',this)">Загрузка зданий</button>
+          <button class="mf-btn" onclick="setMetric('staffing',this)">Укомплект-ть</button>
+          <button class="mf-btn" onclick="setMetric('turnover',this)">Текучесть</button>
         </div>
         <div class="map-legend">
           <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
@@ -120,6 +125,11 @@
       </div>
     </div>
     <div class="card">
+      <div class="card-title">ЗП по категориям работников</div>
+      <div class="card-sub">Сравнение с целевыми уровнями: дошкольное ≥88 372 ₽, общее ≥90 814 ₽, доп. ≥101 081 ₽</div>
+      <div id="ch-salCat" style="height:280px"></div>
+    </div>
+    <div class="card mt14">
       <div class="card-title">Рейтинг округов по средней ЗП</div>
       <div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО</div>
       <div class="tbl-wrap">
@@ -145,10 +155,95 @@
         <div id="ch-subBar" style="height:300px"></div>
       </div>
     </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Тарификация: дошкольное vs общее</div>
+        <div class="card-sub">Объём тарификации в год, млн ₽</div>
+        <div id="ch-tarif" style="height:260px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Субвенция: план vs факт по видам</div>
+        <div class="card-sub">Дошкольное и общее отдельно</div>
+        <div id="ch-subPlanFact" style="height:260px"></div>
+      </div>
+    </div>
     <div class="card mt14">
       <div class="card-title">Динамика план / факт</div>
       <div class="card-sub">Нарастающим итогом, млн ₽</div>
       <div id="ch-subLine" style="height:220px"></div>
+    </div>
+  </div>
+
+  <!-- Кадры -->
+  <div class="tabpane" id="moPane-hr">
+    <div class="g3">
+      <div class="card">
+        <div class="card-title">Укомплектованность педагогами</div>
+        <div class="card-sub">% от штатного расписания</div>
+        <div id="ch-hrStaffing" style="height:280px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Средний возраст педагогов</div>
+        <div class="card-sub"><35 жёлтый, 35–50 зелёный, 50+ красный</div>
+        <div id="ch-hrAge" style="height:280px"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Текучесть кадров по округам</div>
+        <div class="card-sub">Норматив ≤ 7% · Топ-12</div>
+        <div id="ch-hrTurnover" style="height:320px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Средний стаж работы</div>
+        <div class="card-sub"><3 лет красный, 3–6 жёлтый, 7+ зелёный</div>
+        <div id="ch-hrExp" style="height:320px"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">% уволившихся по периодам</div>
+        <div class="card-sub">Испытательный срок / 6 месяцев / год</div>
+        <div id="ch-hrFired" style="height:280px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Средний срок закрытия вакансии</div>
+        <div class="card-sub"><1.5 мес зелёный, 1.5–2 жёлтый, >2 красный</div>
+        <div id="ch-hrVacancy" style="height:280px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Здания и классы -->
+  <div class="tabpane" id="moPane-bld">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Загрузка зданий по округам</div>
+        <div class="card-sub"><50% красный, 51–79% жёлтый, 80%+ зелёный</div>
+        <div id="ch-bldLoad" style="height:320px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Количество зданий по округам</div>
+        <div class="card-sub">Учебные корпуса</div>
+        <div id="ch-bldCount" style="height:320px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Наполняемость по классам 1–11</div>
+      <div class="card-sub">Среднее кол-во учеников в классе. ≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
+      <div id="ch-bldClasses" style="height:300px"></div>
+    </div>
+    <div class="g2 mt14">
+      <div class="card">
+        <div class="card-title">Дошкольные группы по округам</div>
+        <div class="card-sub">Количество групп и средняя наполняемость</div>
+        <div id="ch-bldKinder" style="height:280px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Наполняемость дошкольных групп</div>
+        <div class="card-sub">≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
+        <div id="ch-bldKinderCap" style="height:280px"></div>
+      </div>
     </div>
   </div>
 
@@ -166,10 +261,17 @@
         <div id="ch-cap" style="height:320px"></div>
       </div>
     </div>
-    <div class="card mt14">
-      <div class="card-title">Внеурочная деятельность</div>
-      <div class="card-sub">Флаг риска > 30% от ФОТ педагога</div>
-      <div id="ch-ext" style="height:240px"></div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Внеурочная деятельность</div>
+        <div class="card-sub">Флаг риска > 30% от ФОТ педагога</div>
+        <div id="ch-ext" style="height:240px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Низкая укомплектованность кадрами</div>
+        <div class="card-sub">Топ-12 округов с низкой укомплектованностью</div>
+        <div id="ch-prbStaff" style="height:240px"></div>
+      </div>
     </div>
   </div>
 </div><!-- /page-mo -->
@@ -193,10 +295,11 @@
     <div class="go-stat" id="go-bstat">—</div>
   </div>
   <div class="g4" id="go-kpis"></div>
+  <div class="g4" id="go-kpis2"></div>
   <div class="g2">
     <div class="card">
       <div class="card-title">Причины отклонений</div>
-      <div class="card-sub">Ключевые факторы, влияющие на ЗП в округе</div>
+      <div class="card-sub">Ключевые факторы, влияющие на показатели округа</div>
       <div id="go-insights"></div>
     </div>
     <div class="card">
@@ -210,7 +313,7 @@
     <div class="card-sub">Клик по строке → страница уровня организации</div>
     <div class="tbl-wrap">
       <table class="tbl">
-        <thead><tr><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead>
+        <thead><tr><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Здания</th><th>Загр.%</th><th>Укомпл.%</th><th>Текуч.%</th><th>Статус</th></tr></thead>
         <tbody id="tb-orgs"></tbody>
       </table>
     </div>
@@ -249,12 +352,24 @@
       <div id="ch-orgLoad" style="height:240px"></div>
     </div>
   </div>
+  <div class="g2 mt14">
+    <div class="card">
+      <div class="card-title">По виду образования</div>
+      <div class="card-sub">Распределение сотрудников</div>
+      <div id="ch-orgEduType" style="height:240px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">По категории должности</div>
+      <div class="card-sub">Педагоги / руководство / прочие</div>
+      <div id="ch-orgStaffCat" style="height:240px"></div>
+    </div>
+  </div>
   <div class="card mt14">
-    <div class="card-title">Педагоги организации</div>
-    <div class="card-sub">Красный фон — ЗП ниже целевого уровня</div>
+    <div class="card-title">Сотрудники организации</div>
+    <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
     <div class="tbl-wrap">
       <table class="tbl">
-        <thead><tr><th>ФИО</th><th>Должность</th><th>Ставка</th><th>Часы</th><th>Внеурочка</th><th>Оклад</th><th>Стимул.</th><th>Итого ЗП</th><th>Статус</th></tr></thead>
+        <thead><tr><th>ФИО</th><th>Вид обр.</th><th>Категория</th><th>Должность</th><th>Тип</th><th>Нагрузка</th><th>Ставка</th><th>Предмет</th><th>Класс</th><th>Напол.</th><th>Часы/нед</th><th>ЗП</th><th>Статус</th></tr></thead>
         <tbody id="tb-teachers"></tbody>
       </table>
     </div>
@@ -274,6 +389,8 @@
 <script src="src/scripts/district.js"></script>
 <script src="src/scripts/org.js"></script>
 <script src="src/scripts/charts-mo.js"></script>
+<script src="src/scripts/charts-hr.js"></script>
+<script src="src/scripts/charts-buildings.js"></script>
 <script src="src/scripts/app.js"></script>
 
 <!-- Mobile bottom nav -->
@@ -282,10 +399,16 @@
     <span class="m-ico">🗺</span>Карта
   </button>
   <button class="mob-tab" id="mnt-sal" onclick="moTabMob('sal')">
-    <span class="m-ico">💰</span>Анализ ЗП
+    <span class="m-ico">💰</span>ЗП
   </button>
   <button class="mob-tab" id="mnt-sub" onclick="moTabMob('sub')">
     <span class="m-ico">📊</span>Субвенция
+  </button>
+  <button class="mob-tab" id="mnt-hr" onclick="moTabMob('hr')">
+    <span class="m-ico">👥</span>Кадры
+  </button>
+  <button class="mob-tab" id="mnt-bld" onclick="moTabMob('bld')">
+    <span class="m-ico">🏫</span>Здания
   </button>
   <button class="mob-tab" id="mnt-prb" onclick="moTabMob('prb')">
     <span class="m-ico">⚠️</span>Проблемы

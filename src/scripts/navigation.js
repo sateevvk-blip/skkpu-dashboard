@@ -62,5 +62,7 @@ function moTab(id) {
   if (id === 'map') { setTimeout(function () { if (map) map.invalidateSize(); }, 80); return; }
   if (id === 'sal') renderMoSal();
   if (id === 'sub') renderMoSub();
+  if (id === 'hr') renderMoHr();
+  if (id === 'bld') renderMoBld();
   if (id === 'prb') renderMoProb();
 }

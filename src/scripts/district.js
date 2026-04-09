@@ -30,6 +30,9 @@ function renderDistrict(dname, displayName) {
   bs.className = 'go-stat ' + d.r;
 
   var below = d.orgs.reduce(function (a, o) { return a + o.below; }, 0);
+  var hr = d.hrMetrics || {};
+
+  // Row 1 KPIs (original)
   document.getElementById('go-kpis').innerHTML = [
     { l: 'Средняя ЗП педагога', v: fmtK(d.zp), d: fmtDiff(d.zp) + ' к цели', c: d.r === 'r' ? 'red' : d.r === 'y' ? 'yellow' : 'green' },
     { l: 'Педагогов ниже цели', v: below, d: 'Суммарно по организациям', c: below > 15 ? 'red' : below > 0 ? 'yellow' : 'green' },
@@ -39,27 +42,46 @@ function renderDistrict(dname, displayName) {
     return '<div class="kpi ' + k.c + '"><div class="kl">' + k.l + '</div><div class="kv">' + k.v + '</div><div class="kd">' + k.d + '</div></div>';
   }).join('');
 
+  // Row 2 KPIs (new)
+  document.getElementById('go-kpis2').innerHTML = [
+    { l: 'Зданий', v: d.buildings || '—', d: 'Загрузка: ' + (d.buildingLoad || '—') + '%', c: colorBuildingLoad(d.buildingLoad || 70) === 'r' ? 'red' : colorBuildingLoad(d.buildingLoad || 70) === 'y' ? 'yellow' : 'green' },
+    { l: 'Наполняемость', v: (d.classCapacity ? d.classCapacity['5'].avg : '—'), d: 'Средняя по 5 классу', c: d.classCapacity ? (colorClassCapacity(d.classCapacity['5'].avg) === 'r' ? 'red' : colorClassCapacity(d.classCapacity['5'].avg) === 'y' ? 'yellow' : 'green') : 'yellow' },
+    { l: 'Укомплектованность', v: (hr.staffingRate ? hr.staffingRate.toFixed(1) + '%' : '—'), d: hr.staffingRate >= 95 ? 'В норме' : 'Ниже норматива', c: colorStaffing(hr.staffingRate || 90) === 'r' ? 'red' : colorStaffing(hr.staffingRate || 90) === 'y' ? 'yellow' : 'green' },
+    { l: 'Текучесть кадров', v: (hr.turnover ? hr.turnover.toFixed(1) + '%' : '—'), d: hr.turnover <= 7 ? 'В норме' : hr.turnover <= 10 ? 'Умеренная' : 'Высокая', c: colorTurnover(hr.turnover || 8) === 'r' ? 'red' : colorTurnover(hr.turnover || 8) === 'y' ? 'yellow' : 'green' }
+  ].map(function (k) {
+    return '<div class="kpi ' + k.c + '"><div class="kl">' + k.l + '</div><div class="kv">' + k.v + '</div><div class="kd">' + k.d + '</div></div>';
+  }).join('');
+
   var ins = d.r === 'r' ? [
     { c: 'r', t: 'Низкая комплектация снижает ФОТ', p: 'Наполняемость ' + d.cap + '% — ниже норматива 70%. Расчётный ФОТ формируется по числу учащихся, поэтому дефицит носит системный характер.' },
     { c: 'r', t: 'АХР превышает норматив', p: 'Доля АХР ' + d.ahr + '% при норме ≤ 35%. Высвобождение 1–2 ставок позволит перераспределить средства педагогам.' },
-    { c: 'y', t: 'Высокая доля внеурочки', p: d.ext + '% нагрузки — внеурочная деятельность. Признак компенсации низкой основной ставки.' }
+    { c: 'y', t: 'Высокая доля внеурочки', p: d.ext + '% нагрузки — внеурочная деятельность. Признак компенсации низкой основной ставки.' },
+    { c: 'r', t: 'Высокая текучесть кадров', p: 'Текучесть ' + (hr.turnover || '—') + '%. Средний срок закрытия вакансий — ' + (hr.vacancyCloseDays || '—') + ' дней.' }
   ] : d.r === 'y' ? [
     { c: 'y', t: 'Пограничный уровень ЗП', p: 'Средняя ЗП ' + fmtK(d.zp) + ' ниже цели на ' + fmtDiff(d.zp) + '. Проблема локальная, затрагивает часть организаций.' },
-    { c: 'b', t: 'АХР близок к норме', p: 'Показатель ' + d.ahr + '% — на границе. Рекомендуется точечная проверка конкретных организаций.' }
+    { c: 'b', t: 'АХР близок к норме', p: 'Показатель ' + d.ahr + '% — на границе. Рекомендуется точечная проверка конкретных организаций.' },
+    { c: 'y', t: 'Загрузка зданий умеренная', p: 'Загрузка зданий ' + (d.buildingLoad || '—') + '%. Есть потенциал для оптимизации.' }
   ] : [
     { c: 'g', t: 'Показатели в норме', p: 'Округ демонстрирует устойчивую модель. ЗП выше цели, АХР в норме, комплектация высокая.' },
-    { c: 'b', t: 'Рекомендация', p: 'Возможно использование как референсного округа при тиражировании лучших практик.' }
+    { c: 'b', t: 'Рекомендация', p: 'Возможно использование как референсного округа при тиражировании лучших практик.' },
+    { c: 'g', t: 'Кадровая стабильность', p: 'Укомплектованность ' + (hr.staffingRate || '—') + '%, текучесть ' + (hr.turnover || '—') + '%. Показатели стабильны.' }
   ];
   document.getElementById('go-insights').innerHTML = ins.map(function (x) {
     return '<div class="insight ' + x.c + '"><h4>' + x.t + '</h4><p>' + x.p + '</p></div>';
   }).join('');
 
+  // Expanded orgs table
   document.getElementById('tb-orgs').innerHTML = d.orgs.map(function (o) {
-    return '<tr onclick=\'openOrg(' + JSON.stringify(o) + ')\'>' +
+    return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
       '<td><b>' + o.name + '</b></td><td>' + o.type + '</td>' +
       '<td style="font-weight:700;color:' + (o.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtK(o.zp) + '</td>' +
       '<td style="color:' + (o.below > 5 ? '#dc2626' : o.below > 0 ? '#d97706' : '#374151') + '">' + o.below + '</td>' +
-      '<td>' + o.ahr + '%</td><td>' + o.cap + '%</td><td>' + pill(o.r) + '</td></tr>';
+      '<td>' + o.ahr + '%</td><td>' + o.cap + '%</td>' +
+      '<td>' + (o.buildings || '—') + '</td>' +
+      '<td style="color:' + zoneColor(colorBuildingLoad(o.buildingLoad || 70)) + '">' + (o.buildingLoad || '—') + '%</td>' +
+      '<td style="color:' + zoneColor(colorStaffing(o.staffingRate || 90)) + '">' + (o.staffingRate || '—') + '%</td>' +
+      '<td style="color:' + zoneColor(colorTurnover(o.turnover || 8)) + '">' + (o.turnover || '—') + '%</td>' +
+      '<td>' + pill(o.r) + '</td></tr>';
   }).join('');
 
   var toastMap = {

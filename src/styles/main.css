@@ -274,3 +274,7 @@ body {
 .btn-outline { background: #fff; border: 1px solid var(--border); color: #374151; }
 .btn-outline:hover { background: #f1f5f9; }
 .hidden { display: none !important; }
+
+/* Wider table support */
+.tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tbl-wrap .tbl { min-width: 800px; }

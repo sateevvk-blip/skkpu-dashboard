@@ -7,7 +7,31 @@ function colorMetric(p) {
   if (state.metric === 'zp')  return p.r === 'r' ? '#ef4444' : p.r === 'y' ? '#f59e0b' : '#10b981';
   if (state.metric === 'ahr') return p.ahr > 40 ? '#ef4444' : p.ahr > 35 ? '#f59e0b' : '#10b981';
   if (state.metric === 'cap') return p.cap < 70 ? '#ef4444' : p.cap < 80 ? '#f59e0b' : '#10b981';
+  if (state.metric === 'ext') return p.ext > 30 ? '#ef4444' : p.ext > 25 ? '#f59e0b' : '#10b981';
+  if (state.metric === 'bload') {
+    var bl = p.buildingLoad || 70;
+    return bl < 50 ? '#ef4444' : bl < 80 ? '#f59e0b' : '#10b981';
+  }
+  if (state.metric === 'staffing') {
+    var sr = p.staffingRate || 90;
+    return sr < 85 ? '#ef4444' : sr < 95 ? '#f59e0b' : '#10b981';
+  }
+  if (state.metric === 'turnover') {
+    var tr = p.turnover || 8;
+    return tr > 10 ? '#ef4444' : tr > 7 ? '#f59e0b' : '#10b981';
+  }
   return p.ext > 30 ? '#ef4444' : p.ext > 25 ? '#f59e0b' : '#10b981';
+}
+
+function metricLabel(p) {
+  if (state.metric === 'zp') return 'ЗП: <b>' + fmtK(p.zp) + '</b>';
+  if (state.metric === 'ahr') return 'АХР: <b>' + p.ahr + '%</b>';
+  if (state.metric === 'cap') return 'Компл.: <b>' + p.cap + '%</b>';
+  if (state.metric === 'ext') return 'Внеурочка: <b>' + p.ext + '%</b>';
+  if (state.metric === 'bload') return 'Загрузка зд.: <b>' + (p.buildingLoad || '—') + '%</b>';
+  if (state.metric === 'staffing') return 'Укомпл.: <b>' + (p.staffingRate || '—') + '%</b>';
+  if (state.metric === 'turnover') return 'Текучесть: <b>' + (p.turnover || '—') + '%</b>';
+  return '';
 }
 
 function styleF(f) {
@@ -34,7 +58,7 @@ function initMap(GEO) {
       var p = feature.properties;
       var nm = p.name_clean || p.name || '?';
       layer.bindPopup(
-        '<div style="font-size:12px;min-width:180px">' +
+        '<div style="font-size:12px;min-width:200px">' +
         '<b style="font-size:13px">' + nm + '</b>' +
         '<div style="margin:6px 0;padding:4px 8px;border-radius:6px;background:' +
           (p.r === 'r' ? '#fef2f2' : p.r === 'y' ? '#fffbeb' : '#f0fdf4') +
@@ -42,11 +66,14 @@ function initMap(GEO) {
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px;margin-bottom:8px">' +
           '<div>ЗП: <b>' + fmtK(p.zp) + '</b></div><div>АХР: <b>' + p.ahr + '%</b></div>' +
           '<div>Компл.: <b>' + p.cap + '%</b></div><div>Внеурочка: <b>' + p.ext + '%</b></div>' +
+          '<div>Загр. зд.: <b>' + (p.buildingLoad || '—') + '%</b></div>' +
+          '<div>Укомпл.: <b>' + (p.staffingRate || '—') + '%</b></div>' +
+          '<div>Текучесть: <b>' + (p.turnover || '—') + '%</b></div>' +
         '</div>' +
         '<button onclick="openDistrict(\'' + nm.replace(/'/g, "\\'") + '\');map.closePopup()"' +
           ' style="width:100%;padding:7px;border:none;background:#2563eb;color:#fff;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px">' +
           'Открыть уровень ГО →</button></div>',
-        { maxWidth: 240 }
+        { maxWidth: 260 }
       );
       layer.on('mouseover', function () { layer.setStyle({ weight: 2.5, color: '#2563eb', fillOpacity: .92 }); });
       layer.on('mouseout', function () { geoLayer.resetStyle(layer); });

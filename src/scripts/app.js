@@ -13,6 +13,7 @@ window.addEventListener('load', async function () {
     window._DISTRICTS = results[1];
     window._TEACHER_NAMES = results[2].names;
     window._TEACHER_ROLES = results[2].roles;
+    window._EMPLOYEES = results[2].employees || [];
 
     initMap(window._GEO);
     updateNav();
