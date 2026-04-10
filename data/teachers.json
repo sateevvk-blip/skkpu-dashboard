@@ -1,290 +1,214 @@
 {
-  "Лотошино": {
-    "r": "r",
-    "zp": 60800,
-    "ahr": 46,
-    "cap": 63,
-    "ext": 36,
-    "meta": "7 организаций · 284 педагога · 3 480 учащихся",
-    "buildings": 12,
-    "buildingLoad": 47,
-    "studentsTotal": 3480,
-    "classesTotal": 142,
-    "classCapacity": {
-      "1": {"count": 14, "avg": 18},
-      "2": {"count": 13, "avg": 17},
-      "3": {"count": 13, "avg": 19},
-      "4": {"count": 12, "avg": 18},
-      "5": {"count": 14, "avg": 16},
-      "6": {"count": 13, "avg": 17},
-      "7": {"count": 12, "avg": 15},
-      "8": {"count": 13, "avg": 16},
-      "9": {"count": 14, "avg": 17},
-      "10": {"count": 7, "avg": 14},
-      "11": {"count": 7, "avg": 13}
+  "names": [
+    "Иванова Мария Сергеевна",
+    "Петров Алексей Иванович",
+    "Сидорова Елена Владимировна",
+    "Кузнецов Денис Андреевич",
+    "Орлова Ольга Петровна",
+    "Морозов Сергей Николаевич",
+    "Соколова Наталья Михайловна",
+    "Волков Андрей Викторович",
+    "Козлова Татьяна Ивановна",
+    "Новиков Дмитрий Павлович",
+    "Лебедева Анна Юрьевна",
+    "Смирнов Игорь Валерьевич"
+  ],
+  "roles": [
+    "Учитель математики",
+    "Учитель русского языка",
+    "Учитель начальных классов",
+    "Учитель истории",
+    "Учитель физики",
+    "Учитель биологии",
+    "Учитель химии",
+    "Учитель английского",
+    "Воспитатель",
+    "Зам. директора",
+    "Учитель информатики",
+    "Методист"
+  ],
+  "employees": [
+    {
+      "name": "Иванова Мария Сергеевна",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель математики",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Математика",
+      "className": "10-А",
+      "classCapacity": 26,
+      "weeklyHours": 24,
+      "salary": 78400
     },
-    "kindergartenGroups": 28,
-    "kindergartenCapacity": 18,
-    "staffPhysical": {
-      "total": 420,
-      "preschool": 62,
-      "general": 178,
-      "additional": 24,
-      "director": 7,
-      "deputy": 21,
-      "other": 128
+    {
+      "name": "Петров Алексей Иванович",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель русского языка",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Русский язык",
+      "className": "9-Б",
+      "classCapacity": 24,
+      "weeklyHours": 22,
+      "salary": 72100
     },
-    "staffSSC": {
-      "total": 395,
-      "preschool": 58,
-      "general": 165,
-      "additional": 22,
-      "director": 7,
-      "deputy": 20,
-      "other": 123
+    {
+      "name": "Петров Алексей Иванович",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель русского языка",
+      "positionType": "основная",
+      "loadType": "внеурочная",
+      "loadRate": 0.25,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 4,
+      "salary": null
     },
-    "salaryByCategory": {
-      "preschool": 64200,
-      "general": 60800,
-      "additional": 58700,
-      "director": 112000,
-      "deputy": 87400,
-      "other": 42100
+    {
+      "name": "Сидорова Елена Владимировна",
+      "educationType": "дошкольное",
+      "staffCategory": "педагогические работники",
+      "position": "Воспитатель",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.25,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 36,
+      "salary": 68200
     },
-    "teacherLoad": {
-      "avgLessonsPerWeek": 27.4,
-      "avgExtracurricular": 6.2,
-      "directorHours": 12,
-      "deputyHours": 10,
-      "otherPedHours": 24.1
+    {
+      "name": "Кузнецов Денис Андреевич",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель истории",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 0.75,
+      "subject": "История",
+      "className": "8-В",
+      "classCapacity": 22,
+      "weeklyHours": 18,
+      "salary": 64800
     },
-    "tarification": {
-      "preschool": 42800000,
-      "general": 118400000
+    {
+      "name": "Орлова Ольга Петровна",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель физики",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Физика",
+      "className": "11-А",
+      "classCapacity": 19,
+      "weeklyHours": 26,
+      "salary": 76500
     },
-    "subsidyPlanFact": {
-      "plan": {"preschoolPed": 38200000, "preschoolOther": 18400000, "generalPed": 106800000, "generalOther": 52100000},
-      "fact": {"preschoolPed": 35100000, "preschoolOther": 16800000, "generalPed": 94200000, "generalOther": 46900000},
-      "executionPct": 82
+    {
+      "name": "Морозов Сергей Николаевич",
+      "educationType": "дополнительное",
+      "staffCategory": "педагогические работники",
+      "position": "Педагог доп. образования",
+      "positionType": "совмещение",
+      "loadType": "основная",
+      "loadRate": 0.5,
+      "subject": "Робототехника",
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 12,
+      "salary": 42800
     },
-    "hrMetrics": {
-      "staffingRate": 86.4,
-      "turnover": 14.2,
-      "avgExperience": 4.8,
-      "avgAge": 48.6,
-      "firedProbation": 8.2,
-      "fired6m": 12.4,
-      "fired1y": 18.7,
-      "vacancyCloseDays": 72
+    {
+      "name": "Соколова Наталья Михайловна",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель начальных классов",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Начальные классы",
+      "className": "3-А",
+      "classCapacity": 28,
+      "weeklyHours": 23,
+      "salary": 71200
     },
-    "orgs": [
-      {
-        "name": "МБОУ «Средняя школа № 1»", "type": "ОО", "zp": 57200, "below": 18, "ahr": 48, "cap": 60, "r": "r",
-        "teachers": 38, "students": 490, "classes": 18, "buildings": 2, "buildingLoad": 44,
-        "staffingRate": 82.1, "turnover": 16.3, "kindergartenGroups": 4, "kindergartenCapacity": 17
-      },
-      {
-        "name": "МБОУ «Гимназия»", "type": "ОО", "zp": 62400, "below": 9, "ahr": 45, "cap": 65, "r": "r",
-        "teachers": 52, "students": 720, "classes": 26, "buildings": 3, "buildingLoad": 48,
-        "staffingRate": 84.5, "turnover": 13.8, "kindergartenGroups": 6, "kindergartenCapacity": 19
-      },
-      {
-        "name": "МБОУ «Школа № 3»", "type": "ОО", "zp": 64700, "below": 5, "ahr": 43, "cap": 68, "r": "y",
-        "teachers": 41, "students": 610, "classes": 22, "buildings": 2, "buildingLoad": 52,
-        "staffingRate": 88.2, "turnover": 11.1, "kindergartenGroups": 5, "kindergartenCapacity": 18
-      }
-    ]
-  },
-  "Клин": {
-    "r": "y",
-    "zp": 70200,
-    "ahr": 36,
-    "cap": 78,
-    "ext": 25,
-    "meta": "12 организаций · 621 педагог · 8 100 учащихся",
-    "buildings": 24,
-    "buildingLoad": 72,
-    "studentsTotal": 8100,
-    "classesTotal": 324,
-    "classCapacity": {
-      "1": {"count": 32, "avg": 23},
-      "2": {"count": 31, "avg": 22},
-      "3": {"count": 30, "avg": 24},
-      "4": {"count": 29, "avg": 23},
-      "5": {"count": 31, "avg": 22},
-      "6": {"count": 30, "avg": 21},
-      "7": {"count": 29, "avg": 22},
-      "8": {"count": 28, "avg": 21},
-      "9": {"count": 30, "avg": 23},
-      "10": {"count": 15, "avg": 20},
-      "11": {"count": 15, "avg": 19}
+    {
+      "name": "Волков Андрей Викторович",
+      "educationType": "общее",
+      "staffCategory": "руководитель",
+      "position": "Директор",
+      "positionType": "основная",
+      "loadType": "общая",
+      "loadRate": 1.0,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 8,
+      "salary": 124000
     },
-    "kindergartenGroups": 64,
-    "kindergartenCapacity": 22,
-    "staffPhysical": {
-      "total": 920,
-      "preschool": 142,
-      "general": 386,
-      "additional": 53,
-      "director": 12,
-      "deputy": 44,
-      "other": 283
+    {
+      "name": "Козлова Татьяна Ивановна",
+      "educationType": "общее",
+      "staffCategory": "заместитель руководителя",
+      "position": "Зам. директора",
+      "positionType": "основная",
+      "loadType": "общая",
+      "loadRate": 1.0,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 10,
+      "salary": 96400
     },
-    "staffSSC": {
-      "total": 874,
-      "preschool": 135,
-      "general": 367,
-      "additional": 50,
-      "director": 12,
-      "deputy": 42,
-      "other": 268
+    {
+      "name": "Новиков Дмитрий Павлович",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель информатики",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Информатика",
+      "className": "7-А",
+      "classCapacity": 25,
+      "weeklyHours": 24,
+      "salary": 74600
     },
-    "salaryByCategory": {
-      "preschool": 82400,
-      "general": 70200,
-      "additional": 71800,
-      "director": 134000,
-      "deputy": 98600,
-      "other": 48200
+    {
+      "name": "Лебедева Анна Юрьевна",
+      "educationType": "дошкольное",
+      "staffCategory": "педагогические работники",
+      "position": "Воспитатель",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 36,
+      "salary": 62400
     },
-    "teacherLoad": {
-      "avgLessonsPerWeek": 25.1,
-      "avgExtracurricular": 4.8,
-      "directorHours": 9,
-      "deputyHours": 8,
-      "otherPedHours": 22.4
-    },
-    "tarification": {
-      "preschool": 98600000,
-      "general": 264200000
-    },
-    "subsidyPlanFact": {
-      "plan": {"preschoolPed": 88400000, "preschoolOther": 42600000, "generalPed": 238000000, "generalOther": 116200000},
-      "fact": {"preschoolPed": 82100000, "preschoolOther": 39800000, "generalPed": 221600000, "generalOther": 108400000},
-      "executionPct": 89
-    },
-    "hrMetrics": {
-      "staffingRate": 92.8,
-      "turnover": 8.4,
-      "avgExperience": 8.2,
-      "avgAge": 44.1,
-      "firedProbation": 4.1,
-      "fired6m": 6.8,
-      "fired1y": 10.2,
-      "vacancyCloseDays": 48
-    },
-    "orgs": [
-      {
-        "name": "МБОУ «Лицей № 3»", "type": "ОО", "zp": 68400, "below": 4, "ahr": 37, "cap": 76, "r": "y",
-        "teachers": 66, "students": 1020, "classes": 38, "buildings": 3, "buildingLoad": 70,
-        "staffingRate": 91.2, "turnover": 9.1, "kindergartenGroups": 8, "kindergartenCapacity": 22
-      },
-      {
-        "name": "МБОУ «Школа № 7»", "type": "ОО", "zp": 71600, "below": 2, "ahr": 35, "cap": 80, "r": "y",
-        "teachers": 54, "students": 840, "classes": 32, "buildings": 2, "buildingLoad": 74,
-        "staffingRate": 93.6, "turnover": 7.8, "kindergartenGroups": 6, "kindergartenCapacity": 23
-      },
-      {
-        "name": "МБОУ «Гимназия № 2»", "type": "ОО", "zp": 76500, "below": 0, "ahr": 33, "cap": 83, "r": "g",
-        "teachers": 70, "students": 1240, "classes": 44, "buildings": 4, "buildingLoad": 78,
-        "staffingRate": 96.4, "turnover": 5.2, "kindergartenGroups": 10, "kindergartenCapacity": 24
-      }
-    ]
-  },
-  "Химки": {
-    "r": "g",
-    "zp": 81400,
-    "ahr": 24,
-    "cap": 94,
-    "ext": 12,
-    "meta": "18 организаций · 1 240 педагогов · 17 500 учащихся",
-    "buildings": 42,
-    "buildingLoad": 91,
-    "studentsTotal": 17500,
-    "classesTotal": 680,
-    "classCapacity": {
-      "1": {"count": 68, "avg": 27},
-      "2": {"count": 66, "avg": 26},
-      "3": {"count": 65, "avg": 27},
-      "4": {"count": 64, "avg": 26},
-      "5": {"count": 66, "avg": 25},
-      "6": {"count": 64, "avg": 26},
-      "7": {"count": 62, "avg": 25},
-      "8": {"count": 60, "avg": 26},
-      "9": {"count": 62, "avg": 27},
-      "10": {"count": 32, "avg": 24},
-      "11": {"count": 31, "avg": 25}
-    },
-    "kindergartenGroups": 134,
-    "kindergartenCapacity": 26,
-    "staffPhysical": {
-      "total": 2180,
-      "preschool": 324,
-      "general": 896,
-      "additional": 128,
-      "director": 18,
-      "deputy": 96,
-      "other": 718
-    },
-    "staffSSC": {
-      "total": 2086,
-      "preschool": 310,
-      "general": 858,
-      "additional": 122,
-      "director": 18,
-      "deputy": 92,
-      "other": 686
-    },
-    "salaryByCategory": {
-      "preschool": 94800,
-      "general": 91400,
-      "additional": 106200,
-      "director": 156000,
-      "deputy": 118400,
-      "other": 56800
-    },
-    "teacherLoad": {
-      "avgLessonsPerWeek": 23.8,
-      "avgExtracurricular": 3.1,
-      "directorHours": 6,
-      "deputyHours": 5,
-      "otherPedHours": 21.2
-    },
-    "tarification": {
-      "preschool": 228400000,
-      "general": 612800000
-    },
-    "subsidyPlanFact": {
-      "plan": {"preschoolPed": 204600000, "preschoolOther": 98600000, "generalPed": 552000000, "generalOther": 269400000},
-      "fact": {"preschoolPed": 198200000, "preschoolOther": 96100000, "generalPed": 538600000, "generalOther": 264200000},
-      "executionPct": 95
-    },
-    "hrMetrics": {
-      "staffingRate": 97.8,
-      "turnover": 5.1,
-      "avgExperience": 12.4,
-      "avgAge": 41.2,
-      "firedProbation": 1.8,
-      "fired6m": 3.2,
-      "fired1y": 5.4,
-      "vacancyCloseDays": 28
-    },
-    "orgs": [
-      {
-        "name": "МБОУ «Лицей \"Горизонт\"»", "type": "ОО", "zp": 79800, "below": 0, "ahr": 25, "cap": 93, "r": "g",
-        "teachers": 112, "students": 1840, "classes": 62, "buildings": 4, "buildingLoad": 92,
-        "staffingRate": 98.2, "turnover": 4.1, "kindergartenGroups": 12, "kindergartenCapacity": 26
-      },
-      {
-        "name": "МБОУ «Школа № 14»", "type": "ОО", "zp": 82600, "below": 0, "ahr": 23, "cap": 95, "r": "g",
-        "teachers": 98, "students": 1720, "classes": 58, "buildings": 3, "buildingLoad": 94,
-        "staffingRate": 97.6, "turnover": 4.8, "kindergartenGroups": 10, "kindergartenCapacity": 27
-      },
-      {
-        "name": "МБОУ «Гимназия № 9»", "type": "ОО", "zp": 84100, "below": 0, "ahr": 22, "cap": 96, "r": "g",
-        "teachers": 130, "students": 2210, "classes": 72, "buildings": 5, "buildingLoad": 96,
-        "staffingRate": 99.1, "turnover": 3.6, "kindergartenGroups": 14, "kindergartenCapacity": 28
-      }
-    ]
-  }
+    {
+      "name": "Смирнов Игорь Валерьевич",
+      "educationType": "общее",
+      "staffCategory": "прочие работники",
+      "position": "Методист",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": null,
+      "className": null,
+      "classCapacity": null,
+      "weeklyHours": 0,
+      "salary": 48200
+    }
+  ]
 }
