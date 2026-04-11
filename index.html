@@ -371,8 +371,44 @@
     <div class="card-title">Сотрудники организации</div>
     <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
     <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>ID</th><th>ФИО</th><th>Вид обр.</th><th>Категория</th><th>Должность</th><th>Тип</th><th>Нагрузка</th><th>Ставка</th><th>Предмет</th><th>Класс</th><th>Напол.</th><th>Часы/нед</th><th>ЗП</th><th>Статус</th></tr></thead>
+      <!-- fix(#13): <colgroup> фиксирует ширины колонок — работает в паре с
+           table-layout: fixed в CSS. Без явных ширин браузер независимо
+           пересчитывает <thead> и <tbody>, что даёт визуальное смещение. -->
+      <table class="tbl" id="tb-teachers">
+        <colgroup>
+          <col style="width:70px">  <!-- ID -->
+          <col style="width:200px"> <!-- ФИО -->
+          <col style="width:100px"> <!-- Вид обр. -->
+          <col style="width:130px"> <!-- Категория -->
+          <col style="width:160px"> <!-- Должность -->
+          <col style="width:80px">  <!-- Тип -->
+          <col style="width:90px">  <!-- Нагрузка -->
+          <col style="width:80px">  <!-- Ставка -->
+          <col style="width:110px"> <!-- Предмет -->
+          <col style="width:70px">  <!-- Класс -->
+          <col style="width:70px">  <!-- Напол. -->
+          <col style="width:80px">  <!-- Часы/нед -->
+          <col style="width:90px">  <!-- ЗП -->
+          <col style="width:60px">  <!-- Статус -->
+        </colgroup>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>ФИО</th>
+            <th>Вид обр.</th>
+            <th>Категория</th>
+            <th>Должность</th>
+            <th>Тип</th>
+            <th>Нагрузка</th>
+            <th>Ставка</th>
+            <th>Предмет</th>
+            <th>Класс</th>
+            <th>Напол.</th>
+            <th>Часы/нед</th>
+            <th>ЗП</th>
+            <th>Статус</th>
+          </tr>
+        </thead>
         <tbody id="tb-teachers"></tbody>
       </table>
     </div>
