@@ -10,6 +10,7 @@
  *     AppState.get('organizations') по districtId, а не из d.orgs напрямую.
  *     Это гарантирует уникальную привязку каждой организации к одному округу.
  *   — Fallback на d.orgs сохранён для обратной совместимости.
+ *   — Добавлена первая колонка ID в таблицу организаций округа (#tb-orgs).
  */
 
 function openDistrict(rawName) {
@@ -102,9 +103,11 @@ function renderDistrict(dname, displayName) {
     return '<div class="insight ' + x.c + '"><h4>' + x.t + '</h4><p>' + x.p + '</p></div>';
   }).join('');
 
-  // FIX #11: используем отфильтрованный массив orgs
+  // FIX #11: используем отфильтрованный массив orgs + колонка ID (из main)
   document.getElementById('tb-orgs').innerHTML = orgs.map(function (o) {
+    var orgIdDisplay = String(o.id || o.orgId || '').padStart(4, '0');
     return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
+      '<td style="font-family:monospace;color:var(--color-text-muted,#888);white-space:nowrap">' + orgIdDisplay + '</td>' +
       '<td><b>' + o.name + '</b></td><td>' + o.type + '</td>' +
       '<td style="font-weight:700;color:' + (o.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtK(o.zp) + '</td>' +
       '<td style="color:' + (o.below > 5 ? '#dc2626' : o.below > 0 ? '#d97706' : '#374151') + '">' + (o.below || 0) + '</td>' +

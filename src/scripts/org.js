@@ -24,7 +24,10 @@
  *
  * FIXES (issue #11):
  *
- * Баг 6: Фильтрация сотрудников — добавлена проверка districtId,
+ * Баг 6: Добавлен вывод ID организации в верхней секции (#org-id-badge).
+ * Баг 7: Добавлена колонка «ID» сотрудника в таблицу #tb-teachers.
+ *        Colspan в пустом состоянии обновлён до 14.
+ * Баг 8: Фильтрация сотрудников — добавлена проверка districtId,
  *   чтобы сотрудник с совпадающим orgId из другого округа не попал в таблицу.
  */
 
@@ -68,6 +71,13 @@ function renderOrg(org, districtRawName) {
     elMeta.textContent = parts.join(' · ');
   }
 
+  // FIX issue #11 Баг 6: показываем ID организации в верхней секции
+  var elIdBadge = document.getElementById('org-id-badge');
+  if (elIdBadge) {
+    var orgIdDisplay = String(org.id || org.orgId || '').padStart(4, '0');
+    elIdBadge.textContent = orgIdDisplay ? 'ID: ' + orgIdDisplay : '';
+  }
+
   var elStatus = document.getElementById('org-status');
   if (elStatus) {
     elStatus.textContent = stxt(org.r);
@@ -90,7 +100,7 @@ function renderOrg(org, districtRawName) {
 
   // ── Таблица сотрудников #tb-teachers ──────────────────────────────────────
   // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями.
-  // FIX Баг 6 (#11): добавляем проверку districtId для изоляции сотрудников
+  // FIX Баг 8 (#11): добавляем проверку districtId для изоляции сотрудников
   //   по округу — исключаем ситуацию, когда совпадающий orgId из другого
   //   округа даёт «чужих» сотрудников.
   var orgIdNorm = String(org.id || org.orgId || '').padStart(4, '0');
@@ -120,7 +130,8 @@ function renderOrg(org, districtRawName) {
 // FIX Баг 2: 13 <td> в соответствии с <thead> в index.html;
 //   убран фильтр loadType — показываем всех сотрудников организации.
 //
-// Колонки: ФИО | Вид обр. | Категория | Должность | Тип | Нагрузка
+// FIX issue #11 Баг 7: добавлена первая колонка «ID» сотрудника → итого 14 колонок.
+// Колонки: ID | ФИО | Вид обр. | Категория | Должность | Тип | Нагрузка
 //          | Ставка | Предмет | Класс | Напол. | Часы/нед | ЗП | Статус
 function _renderTeachersTable(employees) {
   var tb = document.getElementById('tb-teachers');
@@ -133,7 +144,7 @@ function _renderTeachersTable(employees) {
   }
 
   if (!employees.length) {
-    tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--color-text-muted,#888)">Нет данных о сотрудниках</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="14" style="text-align:center;color:var(--color-text-muted,#888)">Нет данных о сотрудниках</td></tr>';
     return;
   }
 
@@ -149,8 +160,12 @@ function _renderTeachersTable(employees) {
     // подсвечиваем строки с ЗП ниже целевого уровня
     var rowClass = (e.salary && e.salary < 74500) ? ' class="row-warn"' : '';
 
+    // ID сотрудника: используем e.id, e.employeeId или e.tabNo
+    var empId = e.id || e.employeeId || e.tabNo || '—';
+
     return [
       '<tr' + rowClass + '>',
+      '<td style="font-family:monospace;color:var(--color-text-muted,#888)">' + empId + '</td>',  // ID
       '<td>' + (e.name          || '—') + '</td>',   // ФИО
       '<td>' + (e.educationType || '—') + '</td>',   // Вид обр.
       '<td>' + (e.staffCategory || '—') + '</td>',   // Категория
