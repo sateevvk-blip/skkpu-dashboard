@@ -27,6 +27,7 @@
  * Баг 6: Добавлен вывод ID организации в верхней секции (#org-id-badge).
  * Баг 7: Добавлена колонка «ID» сотрудника в таблицу #tb-teachers.
  *        Colspan в пустом состоянии обновлён до 14.
+
  */
 
 function openOrg(org) {
@@ -56,7 +57,7 @@ function renderOrg(org, districtRawName) {
   const DISTRICTS = AppState.get('districts') || {};
   const district  = DISTRICTS[resolved] || {};
 
-  // ── Заголовок ─────────────────────────────────────────────────────────────
+  // ── Заголовок ──────────────────────────────────────────────────────────────────────────────
   // FIX Баг 1: используем реальные ID из index.html
   var elName = document.getElementById('org-name');
   if (elName) elName.textContent = org.name || '—';
@@ -82,7 +83,7 @@ function renderOrg(org, districtRawName) {
     elStatus.className = 'org-status ' + (org.r || '');
   }
 
-  // ── KPI-блоки ─────────────────────────────────────────────────────────────
+  // ── KPI-блоки ───────────────────────────────────────────────────────────────────────────────
   // FIX Баг 3: null-guard перед записью
   var elKpis = document.getElementById('org-kpis');
   if (elKpis) {
@@ -96,29 +97,35 @@ function renderOrg(org, districtRawName) {
     }).join('');
   }
 
-  // ── Таблица сотрудников #tb-teachers ──────────────────────────────────────
-  // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями,
-  // чтобы «401» и «0401» считались одним и тем же идентификатором.
+  // ── Таблица сотрудников #tb-teachers ──────────────────────────────────────────────
+  // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями.
+  // FIX Баг 8 (#11): добавляем проверку districtId для изоляции сотрудников
+  //   по округу — исключаем ситуацию, когда совпадающий orgId из другого
+  //   округа даёт «чужих» сотрудников.
   var orgIdNorm = String(org.id || org.orgId || '').padStart(4, '0');
+  var currentDistrict = resolved; // нормализованное название округа
   var employees = (AppState.get('employees') || []).filter(function (e) {
-    return String(e.orgId || '').padStart(4, '0') === orgIdNorm;
+    var orgMatch      = String(e.orgId || '').padStart(4, '0') === orgIdNorm;
+    // districtId может отсутствовать у старых записей — пропускаем их без блокировки
+    var districtMatch = !e.districtId || !currentDistrict || e.districtId === currentDistrict;
+    return orgMatch && districtMatch;
   });
   _renderTeachersTable(employees);
 
-  // ── 4 графика организации ──────────────────────────────────────────────────
+  // ── 4 графика организации ─────────────────────────────────────────────────────────────────
   _renderOrgCharts(employees);
 
-  // ── Тост ──────────────────────────────────────────────────────────────────
+  // ── Тост ────────────────────────────────────────────────────────────────────────────────────
   var toastMap = {
     r: ['⚠️', 'Критичная организация',        'Зафиксированы отклонения. Рекомендуется детальный анализ.', 'r'],
     y: ['📋', 'Организация под наблюдением',  'Часть показателей требует внимания.',                      'y'],
-    g: ['✅', 'Стабильная организация',        'Показатели в норме.',                                       'g']
+    g: ['✅', 'Стабильная организация',        'Показатели в норме.',                                                       'g']
   };
   var t = toastMap[org.r] || toastMap['g'];
   toast(t[0], t[1], t[2], t[3]);
 }
 
-// ─── Таблица #tb-teachers ─────────────────────────────────────────────────────
+// ─── Таблица #tb-teachers ────────────────────────────────────────────────────────────────────────────────────
 // FIX Баг 2: 13 <td> в соответствии с <thead> в index.html;
 //   убран фильтр loadType — показываем всех сотрудников организации.
 //
@@ -149,7 +156,6 @@ function _renderTeachersTable(employees) {
                : e.salary < 50000 ? '🔴'
                : e.salary < 75000 ? '🟡' : '🟢';
 
-    // подсвечиваем строки с ЗП ниже целевого уровня
     var rowClass = (e.salary && e.salary < 74500) ? ' class="row-warn"' : '';
 
     // ID сотрудника: используем e.id, e.employeeId или e.tabNo
@@ -176,7 +182,7 @@ function _renderTeachersTable(employees) {
   }).join('');
 }
 
-// ─── 4 графика организации ─────────────────────────────────────────────────────
+// ─── 4 графика организации ──────────────────────────────────────────────────────────────────────────────────
 function _renderOrgCharts(employees) {
   if (typeof echarts === 'undefined') return;
 

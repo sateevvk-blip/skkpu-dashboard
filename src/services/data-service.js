@@ -3,6 +3,9 @@
  *
  * Загружает JSON-файлы и сохраняет результаты в AppState.
  * В продакшне замените обращения к fetch-запросам на вызовы API.
+ *
+ * FIXES (issue #11):
+ *   — Добавлена загрузка data/organizations.json → AppState('organizations')
  */
 const DataService = (function () {
   'use strict';
@@ -18,17 +21,20 @@ const DataService = (function () {
    * @returns {Promise<void>}
    */
   async function loadAll() {
-    const [geo, districts, teachers] = await Promise.all([
+    const [geo, districts, teachers, orgsData] = await Promise.all([
       loadJSON('data/geo.json'),
       loadJSON('data/districts.json'),
-      loadJSON('data/teachers.json')
+      loadJSON('data/teachers.json'),
+      loadJSON('data/organizations.json')  // FIX #11
     ]);
 
-    AppState.set('geo',          geo);
-    AppState.set('districts',    districts);
-    AppState.set('teacherNames', teachers.names);
-    AppState.set('teacherRoles', teachers.roles);
-    AppState.set('employees',    teachers.employees || []);
+    AppState.set('geo',           geo);
+    AppState.set('districts',     districts);
+    // FIX #11: organizations доступны через AppState.get('organizations')
+    AppState.set('organizations', orgsData.items || []);
+    AppState.set('teacherNames',  teachers.names);
+    AppState.set('teacherRoles',  teachers.roles);
+    AppState.set('employees',     teachers.employees || []);
   }
 
   return { loadAll };
