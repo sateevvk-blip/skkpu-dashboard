@@ -1,23 +1,34 @@
 /**
- * District (GO) level — rendering and drill-down.
+ * district.js — уровень Городского округа.
+ *
+ * Логика из patch-stage4-district.js поглощена здесь.
+ * Данные читаются из AppState.
+ * window._getDistrictName → window.getDistrictName (normalize.js).
  */
 
-function openDistrict(name) {
-  var DISTRICTS = window._DISTRICTS;
-  var GEO = window._GEO;
-  var exact = DISTRICTS[name];
-  var dname = name;
+function openDistrict(rawName) {
+  const DISTRICTS = AppState.get('districts');
+  const GEO       = AppState.get('geo');
+  // Нормализация «Округ N» → реальное название
+  const resolved  = (typeof window.getDistrictName === 'function')
+    ? (window.getDistrictName(rawName) || rawName)
+    : rawName;
+
+  const exact = DISTRICTS[resolved];
+  let dname = resolved;
   if (!exact) {
-    var feat = GEO.features.find(function (f) { return (f.properties.name_clean || f.properties.name) === name; });
-    var r = feat ? feat.properties.r : 'y';
+    const feat = GEO.features.find(function (f) {
+      return (f.properties.name_clean || f.properties.name) === resolved;
+    });
+    const r = feat ? feat.properties.r : 'y';
     dname = r === 'r' ? 'Лотошино' : r === 'y' ? 'Клин' : 'Химки';
   }
-  renderDistrict(dname, name);
+  renderDistrict(dname, resolved);
 }
 
 function renderDistrict(dname, displayName) {
-  var DISTRICTS = window._DISTRICTS;
-  var d = DISTRICTS[dname];
+  const DISTRICTS = AppState.get('districts');
+  const d = DISTRICTS[dname];
   state.district = displayName || dname;
   state.org = null;
   showPage('go');
@@ -25,14 +36,13 @@ function renderDistrict(dname, displayName) {
   document.getElementById('go-title').textContent = state.district;
   document.getElementById('go-bname').textContent = state.district;
   document.getElementById('go-bmeta').textContent = d.meta;
-  var bs = document.getElementById('go-bstat');
+  const bs = document.getElementById('go-bstat');
   bs.textContent = stxt(d.r);
   bs.className = 'go-stat ' + d.r;
 
-  var below = d.orgs.reduce(function (a, o) { return a + o.below; }, 0);
-  var hr = d.hrMetrics || {};
+  const below = d.orgs.reduce(function (a, o) { return a + o.below; }, 0);
+  const hr = d.hrMetrics || {};
 
-  // Row 1 KPIs (original)
   document.getElementById('go-kpis').innerHTML = [
     { l: 'Средняя ЗП педагога', v: fmtK(d.zp), d: fmtDiff(d.zp) + ' к цели', c: d.r === 'r' ? 'red' : d.r === 'y' ? 'yellow' : 'green' },
     { l: 'Педагогов ниже цели', v: below, d: 'Суммарно по организациям', c: below > 15 ? 'red' : below > 0 ? 'yellow' : 'green' },
@@ -42,7 +52,6 @@ function renderDistrict(dname, displayName) {
     return '<div class="kpi ' + k.c + '"><div class="kl">' + k.l + '</div><div class="kv">' + k.v + '</div><div class="kd">' + k.d + '</div></div>';
   }).join('');
 
-  // Row 2 KPIs (new)
   document.getElementById('go-kpis2').innerHTML = [
     { l: 'Зданий', v: d.buildings || '—', d: 'Загрузка: ' + (d.buildingLoad || '—') + '%', c: colorBuildingLoad(d.buildingLoad || 70) === 'r' ? 'red' : colorBuildingLoad(d.buildingLoad || 70) === 'y' ? 'yellow' : 'green' },
     { l: 'Наполняемость', v: (d.classCapacity ? d.classCapacity['5'].avg : '—'), d: 'Средняя по 5 классу', c: d.classCapacity ? (colorClassCapacity(d.classCapacity['5'].avg) === 'r' ? 'red' : colorClassCapacity(d.classCapacity['5'].avg) === 'y' ? 'yellow' : 'green') : 'yellow' },
@@ -52,7 +61,7 @@ function renderDistrict(dname, displayName) {
     return '<div class="kpi ' + k.c + '"><div class="kl">' + k.l + '</div><div class="kv">' + k.v + '</div><div class="kd">' + k.d + '</div></div>';
   }).join('');
 
-  var ins = d.r === 'r' ? [
+  const ins = d.r === 'r' ? [
     { c: 'r', t: 'Низкая комплектация снижает ФОТ', p: 'Наполняемость ' + d.cap + '% — ниже норматива 70%. Расчётный ФОТ формируется по числу учащихся, поэтому дефицит носит системный характер.' },
     { c: 'r', t: 'АХР превышает норматив', p: 'Доля АХР ' + d.ahr + '% при норме ≤ 35%. Высвобождение 1–2 ставок позволит перераспределить средства педагогам.' },
     { c: 'y', t: 'Высокая доля внеурочки', p: d.ext + '% нагрузки — внеурочная деятельность. Признак компенсации низкой основной ставки.' },
@@ -70,7 +79,6 @@ function renderDistrict(dname, displayName) {
     return '<div class="insight ' + x.c + '"><h4>' + x.t + '</h4><p>' + x.p + '</p></div>';
   }).join('');
 
-  // Expanded orgs table
   document.getElementById('tb-orgs').innerHTML = d.orgs.map(function (o) {
     return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
       '<td><b>' + o.name + '</b></td><td>' + o.type + '</td>' +
@@ -84,25 +92,41 @@ function renderDistrict(dname, displayName) {
       '<td>' + pill(o.r) + '</td></tr>';
   }).join('');
 
-  var toastMap = {
+  // Исправление названий в таблице — из patch-stage3-table.js
+  const districts = AppState.get('districts') || {};
+  const dKeys = Object.keys(districts);
+  const tb = document.getElementById('tb-districts');
+  if (tb) {
+    tb.querySelectorAll('tr').forEach(function (tr) {
+      const td = tr.querySelector('td:first-child b'); if (!td) return;
+      const raw = td.textContent;
+      if (/^Округ\s+\d+$/i.test(raw)) {
+        const m = String(raw).match(/^Округ\s+(\d+)$/i);
+        if (m) { const idx = parseInt(m[1], 10) - 1; const fixed = dKeys[idx] || raw; td.textContent = fixed;
+          const onclick = tr.getAttribute('onclick') || '';
+          if (onclick.indexOf(raw) !== -1) tr.setAttribute('onclick', onclick.replace(raw, fixed));
+        }
+      }
+    });
+  }
+
+  const toastMap = {
     r: ['⚠️', 'Критичный округ', 'Зафиксированы системные нарушения. Рекомендуется проверка организаций.', 'r'],
     y: ['📋', 'Округ под наблюдением', 'Часть организаций требует внимания.', 'y'],
     g: ['✅', 'Стабильный округ', 'Показатели в норме. Можно использовать как референс.', 'g']
   };
-  var t = toastMap[d.r];
+  const t = toastMap[d.r];
   toast(t[0], t[1], t[2], t[3]);
 
   setTimeout(function () {
-    var el = document.getElementById('ch-goSalBar');
+    const el = document.getElementById('ch-goSalBar');
     if (!el._ec) el._ec = echarts.init(el);
     el._ec.setOption({
       grid: { top: 10, right: 60, bottom: 10, left: 10 },
       xAxis: { type: 'value', min: 50000, max: 90000 },
       yAxis: { type: 'category', data: d.orgs.map(function (o) { return o.name.replace(/МБОУ «|»/g, ''); }) },
       tooltip: { formatter: function (p) { return p.name + ': ' + fmt(p.value); } },
-      series: [{
-        type: 'bar',
-        data: d.orgs.map(function (o) { return o.zp; }),
+      series: [{ type: 'bar', data: d.orgs.map(function (o) { return o.zp; }),
         itemStyle: { color: function (p) { return p.data < 66000 ? '#ef4444' : p.data < TARGET ? '#f59e0b' : '#10b981'; } },
         label: { show: true, position: 'right', formatter: function (p) { return fmtK(p.value); } }
       }]
