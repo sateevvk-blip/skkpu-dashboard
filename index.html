@@ -380,9 +380,15 @@
 </div><!-- /body -->
 </div><!-- /shell -->
 
-<!-- Application scripts (order matters) -->
+<!-- Application scripts — порядок важен -->
+<!-- 1. Стор данных: должен быть первым, до всех остальных модулей -->
+<script src="src/store/state.js"></script>
+<!-- 2. Утилиты: форматирование и нормализация -->
 <script src="src/utils/format.js"></script>
+<script src="src/utils/normalize.js"></script>
+<!-- 3. Сервисы: DataService использует AppState -->
 <script src="src/services/data-service.js"></script>
+<!-- 4. UI-модули: используют AppState и DataService -->
 <script src="src/scripts/toast.js"></script>
 <script src="src/scripts/navigation.js"></script>
 <script src="src/scripts/map.js"></script>
@@ -391,6 +397,7 @@
 <script src="src/scripts/charts-mo.js"></script>
 <script src="src/scripts/charts-hr.js"></script>
 <script src="src/scripts/charts-buildings.js"></script>
+<!-- 5. Точка входа: запускается последней -->
 <script src="src/scripts/app.js"></script>
 
 <!-- Mobile bottom nav -->
