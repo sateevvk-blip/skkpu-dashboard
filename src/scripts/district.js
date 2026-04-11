@@ -6,7 +6,8 @@
  * window._getDistrictName → window.getDistrictName (normalize.js).
  *
  * FIXES (issue #11):
-
+ * fix(#22): исправлен оборванный .map(function(o){...}) в renderDistrict —
+ *           блок теперь корректно присвоен innerHTML таблицы go-table.
  */
 
 function openDistrict(rawName) {
@@ -99,7 +100,9 @@ function renderDistrict(dname, displayName) {
     return '<div class="insight ' + x.c + '"><h4>' + x.t + '</h4><p>' + x.p + '</p></div>';
   }).join('');
 
-
+  // fix(#22): восстановлен оборванный .map(function(o){...}) —
+  // присвоение innerHTML таблицы организаций.
+  document.getElementById('go-table').innerHTML = orgs.map(function (o) {
     var orgIdDisplay = String(o.id || o.orgId || '').padStart(4, '0');
     return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
       '<td style="font-family:monospace;color:var(--color-text-muted,#888);white-space:nowrap">' + orgIdDisplay + '</td>' +

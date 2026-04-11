@@ -6,6 +6,9 @@
  *
  * fix(#15): по клику на полигон округа показывается попап с названием
  *           и кнопкой «Перейти в округ». Прямая навигация убрана.
+ *
+ * fix(#22): кнопка «Перейти в округ» теперь навешивается через
+ *           L.DomEvent.on в событии popupopen, а не через onclick-атрибут.
  */
 
 var map;
@@ -79,19 +82,17 @@ function initMap(geoData) {
 
   /**
    * Строит HTML-содержимое попапа для округа.
-   * Кнопка «Перейти в округ» вызывает openDistrict через
-   * глобальный обработчик window._mapGoDistrict.
+   * fix(#22): onclick-атрибут убран — обработчик навешивается снаружи
+   * через L.DomEvent после открытия попапа (событие popupopen).
    */
   function buildPopupContent(name, metric, cfg) {
     var districts = AppState.get('districts') || {};
     var val = districts[name] ? districts[name][metric] : null;
-    // Сохраняем имя в глобальном scope для доступа из onclick
-    window._mapGoDistrict = function () { openDistrict(name); };
     return '<div style="min-width:160px">' +
       '<b style="font-size:13px">' + name + '</b><br>' +
       '<span style="font-size:12px;color:#666">' + cfg.label + ': ' + cfg.format(val) + '</span><br>' +
       '<button ' +
-        'onclick="window._mapGoDistrict()" ' +
+        'class="map-go-btn" ' +
         'style="margin-top:8px;padding:4px 12px;background:#01696f;color:#fff;' +
         'border:none;border-radius:4px;cursor:pointer;font-size:12px">' +
         'Перейти в округ' +
@@ -124,6 +125,14 @@ function initMap(geoData) {
           lyr.unbindPopup();
           lyr.bindPopup(buildPopupContent(name, currentMetric, currentCfg));
           lyr.openPopup(e.latlng);
+        });
+
+        // fix(#22): навешиваем обработчик на кнопку после рендера попапа
+        lyr.on('popupopen', function () {
+          var btn = lyr.getPopup().getElement().querySelector('.map-go-btn');
+          if (btn) {
+            L.DomEvent.on(btn, 'click', function () { openDistrict(name); });
+          }
         });
       }
     }).addTo(map);
