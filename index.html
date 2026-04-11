@@ -371,10 +371,13 @@
     <div class="card-title">Сотрудники организации</div>
     <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
     <div class="tbl-wrap">
-      <!-- fix(#13): <colgroup> фиксирует ширины колонок — работает в паре с
-           table-layout: fixed в CSS. Без явных ширин браузер независимо
-           пересчитывает <thead> и <tbody>, что даёт визуальное смещение. -->
-      <table class="tbl">
+      <!-- fix(#13): id="tb-teachers" на <table> — org.js делает getElementById('tb-teachers')
+           затем querySelector('tbody'). class="tbl-teachers" используется в CSS для
+           table-layout: fixed (свойство работает только на <table>, не на <tbody>).
+           <colgroup> фиксирует ширины колонок — работает в паре с table-layout: fixed.
+           Без явных ширин браузер независимо пересчитывает <thead> и <tbody>,
+           что даёт визуальное смещение шапки. -->
+      <table id="tb-teachers" class="tbl tbl-teachers">
         <colgroup>
           <col style="width:70px">  <!-- ID -->
           <col style="width:200px"> <!-- ФИО -->
@@ -409,7 +412,7 @@
             <th>Статус</th>
           </tr>
         </thead>
-        <tbody id="tb-teachers"></tbody>
+        <tbody></tbody>
       </table>
     </div>
   </div>

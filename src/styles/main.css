@@ -281,14 +281,15 @@ body {
 
 /* fix(#13): таблица сотрудников — фиксированный layout для точного
    выравнивания шапки по данным независимо от длины содержимого ячеек.
-   min-width: 1400px = 14 колонок × ~100px; table-layout: fixed
-   гарантирует, что браузер не перераспределяет ширины после рендера. */
-#tb-teachers {
+   Селектор .tbl-teachers таргетирует <table>, потому что table-layout: fixed
+   работает только на элементе <table> — на <tbody> браузер его игнорирует.
+   min-width: 1400px = 14 колонок × ~100px. */
+.tbl-teachers {
   table-layout: fixed;
   min-width: 1400px;
 }
-#tb-teachers th,
-#tb-teachers td {
+.tbl-teachers th,
+.tbl-teachers td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
