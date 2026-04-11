@@ -278,3 +278,18 @@ body {
 /* Wider table support */
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap .tbl { min-width: 800px; }
+
+/* fix(#13): таблица сотрудников — фиксированный layout для точного
+   выравнивания шапки по данным независимо от длины содержимого ячеек.
+   min-width: 1400px = 14 колонок × ~100px; table-layout: fixed
+   гарантирует, что браузер не перераспределяет ширины после рендера. */
+#tb-teachers {
+  table-layout: fixed;
+  min-width: 1400px;
+}
+#tb-teachers th,
+#tb-teachers td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
