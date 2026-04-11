@@ -1,6 +1,6 @@
 # База знаний: SKKPU Dashboard
 
-> Сформирована на основе анализа закрытых задач (Issues #3, #6, #7, #8, #9/10).  
+> Сформирована на основе анализа закрытых задач (Issues #3, #6, #7, #8, #9/10, #11, #12, #13).  
 > Цель — быстрое погружение в контекст проекта при старте новых задач.
 
 ---
@@ -26,11 +26,13 @@
 | `src/scripts/navigation.js` | Переключение вкладок и уровней, вызовы рендер-функций |
 | `src/scripts/charts-hr.js` | Графики вкладки «Кадры» на уровне МО |
 | `src/scripts/charts-mo.js` | Остальные графики уровня МО |
-| `src/scripts/district.js` | Уровень округа |
+| `src/scripts/charts-buildings.js` | Графики вкладки «Здания» на уровне МО |
+| `src/scripts/district.js` | Уровень округа (список орг из `organizations.json`) |
 | `src/scripts/org.js` | Уровень организации (таблица и графики) |
 | `src/store/state.js` | Единое хранилище данных (AppState) |
 | `data/teachers.json` | Данные по педагогам (`employees[]`) |
-| `data/districts.json` | Данные по округам и организациям (`orgs[]`) |
+| `data/districts.json` | Данные по округам и организациям (`orgs[]`, `hrMetrics`, `kindergartenGroups`, `kindergartenCapacity`) |
+| `data/organizations.json` | Enriched-данные организаций (загружается через `data-service.js`, хранится в `AppState('organizations')`) |
 | `index.html` | Разметка всех страниц/вкладок |
 | `docs/architecture.md` | Архитектурные принципы проекта |
 | `AGENTS.md` | Соглашения для AI-агентов |
@@ -91,14 +93,68 @@ el._ec.setOption(option);
 
 ---
 
+### Issue #11 — Организации одного округа показывались в другом (PR #16/#17)
+
+Организации не имели строгой привязки к округам. `district.js` строил список орг из `d.orgs` в `districts.json`, а `org.js` фильтровал сотрудников только по `orgId` без учёта `districtId` — сотрудник с одинаковым `orgId` из другого округа попадал в таблицу.
+
+**Решение (PR [#16](https://github.com/sateevvk-blip/skkpu-dashboard/pull/16) / [#17](https://github.com/sateevvk-blip/skkpu-dashboard/pull/17)):**
+- `data-service.js`: добавлена загрузка `data/organizations.json` в `Promise.all`; результат (`orgsData.items`) сохраняется в `AppState('organizations')`
+- `district.js`: список организаций строится фильтрацией `AppState.get('organizations')` по `districtId === dname`; метаданные из `d.orgs` объединяются через `Object.assign` (enriched + финансовые KPI); fallback на `d.orgs` сохранён
+- `org.js`: в фильтр сотрудников добавлена проверка `districtId`:
+  ```js
+  var districtMatch = !e.districtId || !currentDistrict || e.districtId === currentDistrict;
+  return orgMatch && districtMatch;
+  ```
+  Записи без поля `districtId` не блокируются (обратная совместимость).
+
+---
+
+### Issue #12 — Пустые графики вкладок «Кадры» и «Здания» (PR #18)
+
+#### charts-hr.js (3 графика)
+
+Функции ссылались на несуществующие DOM-ID (`ch-hrFired`, `ch-hrTenure`) — `getElementById` возвращал `null`, `echarts.init(null)` завершался без рендера; функция `renderMoHrVacancy()` отсутствовала.
+
+| Функция | Было | Стало |
+|---|---|---|
+| `renderMoHr()` | `ch-hrFired` | `ch-hrTurnover` |
+| `renderMoHrTenure()` | `ch-hrTenure` | `ch-hrExp` |
+| *(отсутствовала)* | — | `renderMoHrVacancy()` → `ch-hrVacancy` |
+
+`renderMoHrTenure()` теперь использует приоритетный источник `hrMetrics.avgExperience` из `districts.json` (более полные данные) с fallback на `employees[]`.
+
+`renderMoHrVacancy()`: Top-12 округов по убыванию `hrMetrics.vacancyCloseDays`; цветовая индикация — ≤45 дн. зелёный / ≤60 жёлтый / >60 красный. Вызывается из `navigation.js` в блоке `if (id === 'hr')`.
+
+#### charts-buildings.js (2 графика)
+
+`renderMoBld()` не рендерила контейнеры `ch-bldKinder` и `ch-bldKinderCap`.
+
+**Решение (PR [#18](https://github.com/sateevvk-blip/skkpu-dashboard/pull/18)):** добавлена `renderMoBldKinder()` — два графика из `districts[k].kindergartenGroups` и `kindergartenCapacity`; вызов добавлен в конец `renderMoBld()`.
+
+---
+
+### Issue #13 — Смещение шапки таблицы «Сотрудники организации» (PR #19)
+
+`table-layout: fixed` и `min-width` применялись к `<tbody>`, а не к `<table>`. Браузер игнорирует `table-layout` на `<tbody>` — шапка и тело таблицы пересчитывали ширины независимо.
+
+**Решение (PR [#19](https://github.com/sateevvk-blip/skkpu-dashboard/pull/19)):**
+- `index.html`: `id="tb-teachers"` перенесён на `<table>`; добавлен `class="tbl-teachers"` для CSS-таргетинга; `<tbody>` оставлен без `id` — `org.js` находит его через `.querySelector('tbody')`
+- `main.css`: селектор `#tb-teachers` → `.tbl-teachers`; `table-layout: fixed` теперь применяется к `<table>` — шапка и тело получают одинаковые ширины колонок
+
+---
+
 ## Ключевые паттерны и соглашения
 
 ### Данные
 
 - **Единственный источник данных** по педагогам — `AppState.get('employees')` из `teachers.json`
+- **Единственный источник данных** по организациям — `AppState.get('organizations')` из `organizations.json`
 - **`orgId` нормализуется** через `padStart(4, '0')` с обеих сторон сравнения
+- Сотрудники без поля `districtId` не блокируются (обратная совместимость)
 - `staffingRate` в `teachers.json` — **одинаков для всех сотрудников одного `orgId`** (атрибут организации, не человека)
 - `Math.random()` в рендер-функциях **запрещён** — только реальные данные
+- Метрики HR (`avgExperience`, `vacancyCloseDays`) читаются из `districts[k].hrMetrics` как приоритетный источник; fallback на `employees[]`
+- Данные детских садов: `districts[k].kindergartenGroups` и `kindergartenCapacity`
 
 ### ECharts
 
@@ -114,6 +170,13 @@ el._ec = echarts.init(el);
 el._ec.setOption(option);
 ```
 
+- `getElementById` должен совпадать с реальным DOM-ID контейнера — несоответствие приводит к тихому выходу без рендера
+
+### Таблицы
+
+- `table-layout: fixed` применяется **только к элементу `<table>`**, не к `<tbody>` — иначе браузер игнорирует свойство
+- CSS-таргетинг таблицы через `class`, а не `id`, если `id` нужен JS для querySelector
+
 ### UX / Цветовая индикация
 
 | Показатель | 🔴 Красный | 🟡 Жёлтый | 🟢 Зелёный |
@@ -122,6 +185,7 @@ el._ec.setOption(option);
 | Укомплектованность (`staffingRate`) | < 0.85 | 0.85–0.95 | ≥ 0.95 |
 | Средний возраст | < 35 лет | 35–50 лет | > 50 лет |
 | Средний стаж (`experience`) | < 3 лет | 3–6 лет | ≥ 7 лет |
+| Вакансии (`vacancyCloseDays`) | > 60 дней | ≤ 60 дней | ≤ 45 дней |
 
 ### Структура employee (teachers.json)
 
@@ -142,5 +206,14 @@ el._ec.setOption(option);
   "age",             // добавлено в Issue #10, диапазон 22–68
   "experience",      // добавлено в Issue #10, диапазон 0–40
   "staffingRate"     // добавлено в Issue #10, диапазон 0.65–1.0
+}
+```
+
+### Структура districts[k].hrMetrics (districts.json)
+
+```json
+{
+  "avgExperience":      // средний стаж педагогов округа (число)
+  "vacancyCloseDays":   // среднее время закрытия вакансии в днях (число)
 }
 ```
