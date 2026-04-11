@@ -13,12 +13,13 @@ const AppState = (function () {
     districts:    null,
     teacherNames: null,
     teacherRoles: null,
-    employees:    []
+    employees:    [],
+    mapMetric:    'zp'   // текущий показатель карты (fix #14)
   };
 
   /**
    * Записать данные в стор.
-   * @param {string} key   — один из: 'geo', 'districts', 'teacherNames', 'teacherRoles', 'employees'
+   * @param {string} key   — один из: 'geo', 'districts', 'teacherNames', 'teacherRoles', 'employees', 'mapMetric'
    * @param {*}      value — загруженные данные
    */
   function set(key, value) {
