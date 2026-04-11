@@ -10,6 +10,11 @@
  *   Все три значения — проценты от общего числа записей округа.
  * - Math.random() полностью убран.
  * - Guard: если employees ещё не загружены — функция выходит без ошибки.
+ *
+ * FIX (Issue #8):
+ * - dispose() + echarts.init() перед каждым рендером ch-hrFired:
+ *   полностью сбрасывает состояние ECharts-инстанции при смене МО,
+ *   исключает «просвечивание» данных предыдущего округа и пустой график.
  */
 
 function renderMoHr() {
@@ -62,9 +67,15 @@ function renderMoHr() {
   var top10 = rows.slice(0, 10);
 
   // ── Рендер графика ch-hrFired ────────────────────────────────────────────
+  // FIX Issue #8: dispose + reinit перед каждым рендером,
+  // чтобы при смене МО ECharts не накладывал данные на старый инстанс.
   var eFired = document.getElementById('ch-hrFired');
   if (!eFired) return;
-  if (!eFired._ec) eFired._ec = echarts.init(eFired);
+  if (eFired._ec) {
+    eFired._ec.dispose();
+    eFired._ec = null;
+  }
+  eFired._ec = echarts.init(eFired);
 
   eFired._ec.setOption({
     tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
@@ -107,5 +118,5 @@ function renderMoHr() {
         itemStyle: { color: '#ef4444' }
       }
     ]
-  }, true);
+  });
 }
