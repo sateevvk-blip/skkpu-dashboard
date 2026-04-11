@@ -21,6 +21,11 @@
  * Баг 5: Нормализация orgId — приводим оба идентификатора
  *   к строке с ведущими нулями через padStart(4, '0'),
  *   чтобы «401» из districts.json совпадал с «0401» из teachers.json.
+ *
+ * FIXES (issue #11):
+ *
+ * Баг 6: Фильтрация сотрудников — добавлена проверка districtId,
+ *   чтобы сотрудник с совпадающим orgId из другого округа не попал в таблицу.
  */
 
 function openOrg(org) {
@@ -84,11 +89,17 @@ function renderOrg(org, districtRawName) {
   }
 
   // ── Таблица сотрудников #tb-teachers ──────────────────────────────────────
-  // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями,
-  // чтобы «401» и «0401» считались одним и тем же идентификатором.
+  // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями.
+  // FIX Баг 6 (#11): добавляем проверку districtId для изоляции сотрудников
+  //   по округу — исключаем ситуацию, когда совпадающий orgId из другого
+  //   округа даёт «чужих» сотрудников.
   var orgIdNorm = String(org.id || org.orgId || '').padStart(4, '0');
+  var currentDistrict = resolved; // нормализованное название округа
   var employees = (AppState.get('employees') || []).filter(function (e) {
-    return String(e.orgId || '').padStart(4, '0') === orgIdNorm;
+    var orgMatch      = String(e.orgId || '').padStart(4, '0') === orgIdNorm;
+    // districtId может отсутствовать у старых записей — пропускаем их без блокировки
+    var districtMatch = !e.districtId || !currentDistrict || e.districtId === currentDistrict;
+    return orgMatch && districtMatch;
   });
   _renderTeachersTable(employees);
 

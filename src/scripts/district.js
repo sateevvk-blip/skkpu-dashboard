@@ -4,6 +4,12 @@
  * Логика из patch-stage4-district.js поглощена здесь.
  * Данные читаются из AppState.
  * window._getDistrictName → window.getDistrictName (normalize.js).
+ *
+ * FIXES (issue #11):
+ *   — Список организаций округа строится через фильтрацию
+ *     AppState.get('organizations') по districtId, а не из d.orgs напрямую.
+ *     Это гарантирует уникальную привязку каждой организации к одному округу.
+ *   — Fallback на d.orgs сохранён для обратной совместимости.
  */
 
 function openDistrict(rawName) {
@@ -40,7 +46,24 @@ function renderDistrict(dname, displayName) {
   bs.textContent = stxt(d.r);
   bs.className = 'go-stat ' + d.r;
 
-  const below = d.orgs.reduce(function (a, o) { return a + o.below; }, 0);
+  // FIX #11: фильтруем организации из отдельного справочника по districtId,
+  // чтобы каждая org была привязана ровно к одному округу.
+  // Если organizations ещё не загружены — fallback на d.orgs.
+  var allOrgs = AppState.get('organizations') || [];
+  var districtOrgs = allOrgs.filter(function (o) {
+    return o.districtId === dname;
+  });
+  // Слияние: enriched-данные из organizations.json + финансовые поля из d.orgs
+  var orgsMap = {};
+  (d.orgs || []).forEach(function (o) { orgsMap[String(o.id).padStart(4, '0')] = o; });
+  var orgs = districtOrgs.length > 0
+    ? districtOrgs.map(function (o) {
+        var enriched = orgsMap[String(o.id).padStart(4, '0')] || {};
+        return Object.assign({}, o, enriched);
+      })
+    : (d.orgs || []);  // fallback
+
+  const below = orgs.reduce(function (a, o) { return a + (o.below || 0); }, 0);
   const hr = d.hrMetrics || {};
 
   document.getElementById('go-kpis').innerHTML = [
@@ -79,12 +102,13 @@ function renderDistrict(dname, displayName) {
     return '<div class="insight ' + x.c + '"><h4>' + x.t + '</h4><p>' + x.p + '</p></div>';
   }).join('');
 
-  document.getElementById('tb-orgs').innerHTML = d.orgs.map(function (o) {
+  // FIX #11: используем отфильтрованный массив orgs
+  document.getElementById('tb-orgs').innerHTML = orgs.map(function (o) {
     return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
       '<td><b>' + o.name + '</b></td><td>' + o.type + '</td>' +
       '<td style="font-weight:700;color:' + (o.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtK(o.zp) + '</td>' +
-      '<td style="color:' + (o.below > 5 ? '#dc2626' : o.below > 0 ? '#d97706' : '#374151') + '">' + o.below + '</td>' +
-      '<td>' + o.ahr + '%</td><td>' + o.cap + '%</td>' +
+      '<td style="color:' + (o.below > 5 ? '#dc2626' : o.below > 0 ? '#d97706' : '#374151') + '">' + (o.below || 0) + '</td>' +
+      '<td>' + (o.ahr || '—') + '%</td><td>' + (o.cap || '—') + '%</td>' +
       '<td>' + (o.buildings || '—') + '</td>' +
       '<td style="color:' + zoneColor(colorBuildingLoad(o.buildingLoad || 70)) + '">' + (o.buildingLoad || '—') + '%</td>' +
       '<td style="color:' + zoneColor(colorStaffing(o.staffingRate || 90)) + '">' + (o.staffingRate || '—') + '%</td>' +
@@ -124,9 +148,9 @@ function renderDistrict(dname, displayName) {
     el._ec.setOption({
       grid: { top: 10, right: 60, bottom: 10, left: 10 },
       xAxis: { type: 'value', min: 50000, max: 90000 },
-      yAxis: { type: 'category', data: d.orgs.map(function (o) { return o.name.replace(/МБОУ «|»/g, ''); }) },
+      yAxis: { type: 'category', data: orgs.map(function (o) { return o.name.replace(/МБОУ «|»/g, ''); }) },
       tooltip: { formatter: function (p) { return p.name + ': ' + fmt(p.value); } },
-      series: [{ type: 'bar', data: d.orgs.map(function (o) { return o.zp; }),
+      series: [{ type: 'bar', data: orgs.map(function (o) { return o.zp; }),
         itemStyle: { color: function (p) { return p.data < 66000 ? '#ef4444' : p.data < TARGET ? '#f59e0b' : '#10b981'; } },
         label: { show: true, position: 'right', formatter: function (p) { return fmtK(p.value); } }
       }]
