@@ -1,21 +1,17 @@
 /**
- * Application bootstrap — loads data via DataService and initialises the UI.
+ * app.js — точка входа приложения.
+ *
+ * Загружает данные через DataService и инициализирует UI.
+ * Данные доступны через AppState.get(), а не через window._*.
  */
 window.addEventListener('load', async function () {
   try {
-    var results = await Promise.all([
-      DataService.getGeo(),
-      DataService.getDistricts(),
-      DataService.getTeachers()
-    ]);
+    await DataService.loadAll();
 
-    window._GEO = results[0];
-    window._DISTRICTS = results[1];
-    window._TEACHER_NAMES = results[2].names;
-    window._TEACHER_ROLES = results[2].roles;
-    window._EMPLOYEES = results[2].employees || [];
+    // Нормализация названий округов (ранее patch-stage1-names.js)
+    normalizeDistrictNames();
 
-    initMap(window._GEO);
+    initMap(AppState.get('geo'));
     updateNav();
   } catch (err) {
     console.error('Failed to load dashboard data:', err);
@@ -24,5 +20,5 @@ window.addEventListener('load', async function () {
 });
 
 window.addEventListener('resize', function () {
-  if (map) map.invalidateSize();
+  if (typeof map !== 'undefined' && map) map.invalidateSize();
 });
