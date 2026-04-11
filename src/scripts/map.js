@@ -8,7 +8,7 @@
 var map;
 
 function initMap(geoData) {
-  map = L.map('map-canvas', { zoomControl: true, attributionControl: false });
+  map = L.map('map', { zoomControl: true, attributionControl: false });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 13 }).addTo(map);
 
   let layer = null;
@@ -24,9 +24,9 @@ function initMap(geoData) {
     const dKeys = Object.keys(districts);
     geoData.features.forEach(function (f) {
       const p = f.properties || {};
-      if (p.name_clean && !/^Округ\s+\d+$/i.test(p.name_clean)) return;
+      if (p.name_clean && !/^\u041eкруг\s+\d+$/i.test(p.name_clean)) return;
       const candidate = p.name_clean || p.name || '';
-      if (/^Округ\s+\d+$/i.test(candidate)) {
+      if (/^\u041eкруг\s+\d+$/i.test(candidate)) {
         const num = parseInt(candidate.replace(/\D+/g, ''), 10) - 1;
         if (dKeys[num]) p.name_clean = dKeys[num];
       } else {
