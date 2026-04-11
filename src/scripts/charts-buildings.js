@@ -3,6 +3,10 @@
  *
  * Логика из patch-stage2-charts-bld.js поглощена здесь.
  * Данные читаются из AppState.
+ *
+ * FIX (Issue #12):
+ * - Добавлена renderMoBldKinder() — дошкольные группы и наполняемость (ch-bldKinder, ch-bldKinderCap).
+ * - Вызов renderMoBldKinder() добавлен в конец renderMoBld().
  */
 
 function renderMoBld() {
@@ -96,4 +100,127 @@ function renderMoBld() {
     }, true);
   }
   drawCS('__mo__');
+
+  // FIX #12: рендер дошкольных графиков
+  renderMoBldKinder();
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// renderMoBldKinder() — Дошкольные группы и их наполняемость
+// FIX (Issue #12): новые функции — ch-bldKinder и ch-bldKinderCap не рендерились
+// Источник: districts[k].kindergartenGroups и districts[k].kindergartenCapacity
+// ════════════════════════════════════════════════════════════════════════════
+function renderMoBldKinder() {
+  var DISTRICTS = AppState.get('districts');
+  if (!DISTRICTS) return;
+
+  var dKeys = Object.keys(DISTRICTS);
+
+  // Собрать данные: группы и средняя наполняемость по округам
+  var rows = dKeys.map(function (k) {
+    var d = DISTRICTS[k];
+    if (!d) return null;
+    var groups   = typeof d.kindergartenGroups   === 'number' ? d.kindergartenGroups   : null;
+    var capacity = typeof d.kindergartenCapacity === 'number' ? d.kindergartenCapacity : null;
+    if (groups === null && capacity === null) return null;
+    return {
+      name:     (d.shortName) || k,
+      groups:   groups   || 0,
+      capacity: capacity || 0
+    };
+  }).filter(Boolean);
+
+  if (!rows.length) return;
+
+  // ── ch-bldKinder: кол-во групп по округам (Top-12, по убыванию) ──────────
+  var byGroups = rows.slice().sort(function (a, b) { return b.groups - a.groups; }).slice(0, 12);
+  var eKinder = document.getElementById('ch-bldKinder');
+  if (eKinder) {
+    if (eKinder._ec) { eKinder._ec.dispose(); eKinder._ec = null; }
+    eKinder._ec = echarts.init(eKinder);
+    eKinder._ec.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: function (params) {
+          return params[0].name + ': ' + params[0].value + ' групп';
+        }
+      },
+      grid: { top: 10, right: 60, bottom: 10, left: 150, containLabel: false },
+      xAxis: {
+        type: 'value',
+        name: 'групп'
+      },
+      yAxis: {
+        type: 'category',
+        data: byGroups.map(function (r) { return r.name; }),
+        axisLabel: { fontSize: 10 },
+        inverse: true
+      },
+      series: [{
+        type: 'bar',
+        data: byGroups.map(function (r) {
+          return { value: r.groups, itemStyle: { color: '#8b5cf6' } };
+        }),
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}',
+          fontSize: 10
+        }
+      }]
+    }, true);
+  }
+
+  // ── ch-bldKinderCap: средняя наполняемость дошк. групп (только где есть данные) ──
+  var byCap = rows.filter(function (r) { return r.capacity > 0; })
+    .slice().sort(function (a, b) { return a.capacity - b.capacity; });
+
+  var eKinderCap = document.getElementById('ch-bldKinderCap');
+  if (eKinderCap && byCap.length) {
+    if (eKinderCap._ec) { eKinderCap._ec.dispose(); eKinderCap._ec = null; }
+    eKinderCap._ec = echarts.init(eKinderCap);
+    eKinderCap._ec.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'shadow' },
+        formatter: function (params) {
+          return params[0].name + ': ' + params[0].value + ' чел.';
+        }
+      },
+      grid: { top: 10, right: 60, bottom: 10, left: 150, containLabel: false },
+      xAxis: {
+        type: 'value',
+        name: 'чел.',
+        min: 0,
+        max: 35
+      },
+      yAxis: {
+        type: 'category',
+        data: byCap.map(function (r) { return r.name; }),
+        axisLabel: { fontSize: 10 }
+      },
+      series: [{
+        type: 'bar',
+        data: byCap.map(function (r) {
+          // ≤19 красный, 20–24 жёлтый, 25+ зелёный
+          var c = r.capacity <= 19 ? '#ef4444' : r.capacity <= 24 ? '#f59e0b' : '#10b981';
+          return { value: r.capacity, itemStyle: { color: c } };
+        }),
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{c}',
+          fontSize: 10
+        },
+        markLine: {
+          silent: true,
+          data: [
+            { xAxis: 20, lineStyle: { type: 'dashed', color: '#f59e0b' }, label: { formatter: '20' } },
+            { xAxis: 25, lineStyle: { type: 'dashed', color: '#10b981' }, label: { formatter: '25' } }
+          ]
+        }
+      }]
+    }, true);
+  }
 }

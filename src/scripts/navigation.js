@@ -8,6 +8,9 @@
  * FIX (Issue #10):
  * - При переключении на таб «Кадры» вызываются все 4 рендер-функции:
  *   renderMoHr(), renderMoHrStaffing(), renderMoHrAge(), renderMoHrTenure().
+ *
+ * FIX (Issue #12):
+ * - Добавлен вызов renderMoHrVacancy() в блок tab 'hr'.
  */
 var state = { page: 'mo', district: null, org: null, metric: 'zp', filter: '' };
 
@@ -119,10 +122,12 @@ function moTab(id) {
   if (id === 'sub') renderMoSub();
   if (id === 'hr')  {
     // FIX Issue #10: вызываем все 4 HR-графика при переключении на таб «Кадры»
+    // FIX Issue #12: добавлен вызов renderMoHrVacancy()
     renderMoHr();
     renderMoHrStaffing();
     renderMoHrAge();
     renderMoHrTenure();
+    renderMoHrVacancy();
   }
   if (id === 'bld') renderMoBld();
   // renderMoProb вызывается сразу — ранее это делал patch-stage4-prob.js

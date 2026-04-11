@@ -8,12 +8,17 @@
  * - Guard: если employees ещё не загружены — функция выходит без ошибки.
  *
  * FIX (Issue #8):
- * - dispose() + echarts.init() перед каждым рендером ch-hrFired.
+ * - dispose() + echarts.init() перед каждым рендером ch-hrTurnover.
  *
  * FIX (Issue #9/10):
  * - Реализованы renderMoHrStaffing(), renderMoHrAge(), renderMoHrTenure().
  * - Все три используют поля age, experience, staffingRate из employees[].
- * - dispose() + echarts.init() перед каждым рендером для всех четырёх графиков.
+ * - dispose() + echarts.init() перед каждым рендером для всех графиков.
+ *
+ * FIX (Issue #12):
+ * - ch-hrFired переименован в ch-hrTurnover (соответствует index.html).
+ * - ch-hrTenure переименован в ch-hrExp (соответствует index.html).
+ * - Добавлена renderMoHrVacancy() — средний срок закрытия вакансии по округам (ch-hrVacancy).
  */
 
 // ── Вспомогательная функция: dispose + init ──────────────────────────────────
@@ -40,7 +45,8 @@ function _groupByDistrict(employees) {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// renderMoHr() — Текучесть кадров по округам (Top-10, ch-hrFired)
+// renderMoHr() — % уволившихся по периодам (ch-hrTurnover)
+// FIX #12: исправлен ID с ch-hrFired на ch-hrTurnover
 // ════════════════════════════════════════════════════════════════════════════
 function renderMoHr() {
   var employees = AppState.get('employees');
@@ -77,7 +83,8 @@ function renderMoHr() {
   });
   var top10 = rows.slice(0, 10);
 
-  var chart = _initChart('ch-hrFired');
+  // FIX #12: ch-hrFired → ch-hrTurnover
+  var chart = _initChart('ch-hrTurnover');
   if (!chart) return;
 
   chart.setOption({
@@ -133,19 +140,17 @@ function renderMoHrStaffing() {
 
   var byDistrict = _groupByDistrict(employees);
 
-  // Средний staffingRate по округу (только записи с непустым полем)
   var rows = Object.keys(byDistrict).map(function (name) {
     var list = byDistrict[name].filter(function (e) {
       return typeof e.staffingRate === 'number';
     });
     if (!list.length) return null;
     var avg = list.reduce(function (s, e) { return s + e.staffingRate; }, 0) / list.length;
-    return { name: name, value: Math.round(avg * 1000) / 10 }; // в %
+    return { name: name, value: Math.round(avg * 1000) / 10 };
   }).filter(Boolean);
 
   rows.sort(function (a, b) { return a.value - b.value; });
 
-  // Цветовая индикация: <85% → красный, 85–95% → жёлтый, ≥95% → зелёный
   var colors = rows.map(function (r) {
     if (r.value < 85) return '#ef4444';
     if (r.value < 95) return '#fbbf24';
@@ -210,7 +215,6 @@ function renderMoHrAge() {
 
   rows.sort(function (a, b) { return a.value - b.value; });
 
-  // Цветовая индикация: <35 → жёлтый, 35–50 → зелёный, >50 → красный
   var colors = rows.map(function (r) {
     if (r.value < 35) return '#fbbf24';
     if (r.value <= 50) return '#22c55e';
@@ -256,33 +260,45 @@ function renderMoHrAge() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// renderMoHrTenure() — Средний стаж работы (ch-hrTenure)
+// renderMoHrTenure() — Средний стаж работы (ch-hrExp)
+// FIX #12: исправлен ID с ch-hrTenure на ch-hrExp
 // ════════════════════════════════════════════════════════════════════════════
 function renderMoHrTenure() {
-  var employees = AppState.get('employees');
-  if (!employees || !employees.length) return;
+  var DISTRICTS = AppState.get('districts');
+  if (!DISTRICTS) return;
 
-  var byDistrict = _groupByDistrict(employees);
+  var dKeys = Object.keys(DISTRICTS);
 
-  var rows = Object.keys(byDistrict).map(function (name) {
-    var list = byDistrict[name].filter(function (e) {
-      return typeof e.experience === 'number';
-    });
-    if (!list.length) return null;
-    var avg = list.reduce(function (s, e) { return s + e.experience; }, 0) / list.length;
-    return { name: name, value: Math.round(avg * 10) / 10 };
+  var rows = dKeys.map(function (k) {
+    var hr = DISTRICTS[k].hrMetrics;
+    if (!hr || typeof hr.avgExperience !== 'number') return null;
+    var name = (DISTRICTS[k].shortName) || k;
+    return { name: name, value: hr.avgExperience };
   }).filter(Boolean);
+
+  if (!rows.length) {
+    // fallback: попробовать employees
+    var employees = AppState.get('employees');
+    if (!employees || !employees.length) return;
+    var byDistrict = _groupByDistrict(employees);
+    rows = Object.keys(byDistrict).map(function (name) {
+      var list = byDistrict[name].filter(function (e) { return typeof e.experience === 'number'; });
+      if (!list.length) return null;
+      var avg = list.reduce(function (s, e) { return s + e.experience; }, 0) / list.length;
+      return { name: name, value: Math.round(avg * 10) / 10 };
+    }).filter(Boolean);
+  }
 
   rows.sort(function (a, b) { return a.value - b.value; });
 
-  // Цветовая индикация: <3 → красный, 3–6 → жёлтый, ≥7 → зелёный
   var colors = rows.map(function (r) {
     if (r.value < 3) return '#ef4444';
     if (r.value < 7) return '#fbbf24';
     return '#22c55e';
   });
 
-  var chart = _initChart('ch-hrTenure');
+  // FIX #12: ch-hrTenure → ch-hrExp
+  var chart = _initChart('ch-hrExp');
   if (!chart) return;
 
   chart.setOption({
@@ -313,6 +329,69 @@ function renderMoHrTenure() {
         show: true,
         position: 'right',
         formatter: '{c}',
+        fontSize: 10
+      }
+    }]
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+// renderMoHrVacancy() — Средний срок закрытия вакансии по округам (ch-hrVacancy)
+// FIX #12: новая функция — контейнер ch-hrVacancy не рендерился
+// Источник: districts[k].hrMetrics.vacancyCloseDays
+// ════════════════════════════════════════════════════════════════════════════
+function renderMoHrVacancy() {
+  var DISTRICTS = AppState.get('districts');
+  if (!DISTRICTS) return;
+
+  var dKeys = Object.keys(DISTRICTS);
+
+  var rows = dKeys.map(function (k) {
+    var hr = DISTRICTS[k].hrMetrics;
+    if (!hr || typeof hr.vacancyCloseDays !== 'number') return null;
+    var name = (DISTRICTS[k].shortName) || k;
+    return { name: name, value: hr.vacancyCloseDays };
+  }).filter(Boolean);
+
+  if (!rows.length) return;
+
+  rows.sort(function (a, b) { return b.value - a.value; });
+  var top12 = rows.slice(0, 12);
+
+  var chart = _initChart('ch-hrVacancy');
+  if (!chart) return;
+
+  chart.setOption({
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: function (params) {
+        return params[0].name + ': ' + params[0].value + ' дн.';
+      }
+    },
+    grid: { top: 10, right: 70, bottom: 10, left: 150, containLabel: false },
+    xAxis: {
+      type: 'value',
+      name: 'дней',
+      axisLabel: { formatter: '{value} дн.' }
+    },
+    yAxis: {
+      type: 'category',
+      data: top12.map(function (r) { return r.name; }),
+      axisLabel: { fontSize: 10 },
+      inverse: true
+    },
+    series: [{
+      type: 'bar',
+      data: top12.map(function (r) {
+        // <45 дн → зелёный, 45–60 → жёлтый, >60 → красный
+        var c = r.value <= 45 ? '#22c55e' : r.value <= 60 ? '#fbbf24' : '#ef4444';
+        return { value: r.value, itemStyle: { color: c } };
+      }),
+      label: {
+        show: true,
+        position: 'right',
+        formatter: '{c} дн.',
         fontSize: 10
       }
     }]
