@@ -4,6 +4,10 @@
  * Логика из patch-stage3-nav.js поглощена здесь.
  * Разрешение «Округ N» → реальное название через window.getDistrictName
  * (регистрируется в utils/normalize.js).
+ *
+ * FIX (Issue #10):
+ * - При переключении на таб «Кадры» вызываются все 4 рендер-функции:
+ *   renderMoHr(), renderMoHrStaffing(), renderMoHrAge(), renderMoHrTenure().
  */
 var state = { page: 'mo', district: null, org: null, metric: 'zp', filter: '' };
 
@@ -113,7 +117,13 @@ function moTab(id) {
   if (id === 'map') { setTimeout(function () { if (map) map.invalidateSize(); }, 80); return; }
   if (id === 'sal') renderMoSal();
   if (id === 'sub') renderMoSub();
-  if (id === 'hr')  renderMoHr();
+  if (id === 'hr')  {
+    // FIX Issue #10: вызываем все 4 HR-графика при переключении на таб «Кадры»
+    renderMoHr();
+    renderMoHrStaffing();
+    renderMoHrAge();
+    renderMoHrTenure();
+  }
   if (id === 'bld') renderMoBld();
   // renderMoProb вызывается сразу — ранее это делал patch-stage4-prob.js
   if (id === 'prb') renderMoProb();
