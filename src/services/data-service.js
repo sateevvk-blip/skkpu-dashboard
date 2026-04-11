@@ -1,14 +1,11 @@
 /**
- * Data service — single point of access for dashboard data.
+ * data-service.js — единая точка доступа к данным дашборда.
  *
- * In production this module should fetch from a backend API.
- * Currently it loads local mock JSON files so the frontend
- * never treats business values as hardcoded constants.
+ * Загружает JSON-файлы и сохраняет результаты в AppState.
+ * В продакшне замените обращения к fetch-запросам на вызовы API.
  */
 const DataService = (function () {
-  let _geo = null;
-  let _districts = null;
-  let _teachers = null;
+  'use strict';
 
   async function loadJSON(url) {
     const res = await fetch(url);
@@ -16,20 +13,23 @@ const DataService = (function () {
     return res.json();
   }
 
-  async function getGeo() {
-    if (!_geo) _geo = await loadJSON('data/geo.json');
-    return _geo;
+  /**
+   * Загрузить все данные и записать в AppState.
+   * @returns {Promise<void>}
+   */
+  async function loadAll() {
+    const [geo, districts, teachers] = await Promise.all([
+      loadJSON('data/geo.json'),
+      loadJSON('data/districts.json'),
+      loadJSON('data/teachers.json')
+    ]);
+
+    AppState.set('geo',          geo);
+    AppState.set('districts',    districts);
+    AppState.set('teacherNames', teachers.names);
+    AppState.set('teacherRoles', teachers.roles);
+    AppState.set('employees',    teachers.employees || []);
   }
 
-  async function getDistricts() {
-    if (!_districts) _districts = await loadJSON('data/districts.json');
-    return _districts;
-  }
-
-  async function getTeachers() {
-    if (!_teachers) _teachers = await loadJSON('data/teachers.json');
-    return _teachers;
-  }
-
-  return { getGeo, getDistricts, getTeachers };
+  return { loadAll };
 })();
