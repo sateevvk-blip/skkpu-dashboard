@@ -3,6 +3,9 @@
  *
  * fix(#14): обработчик change фильтра записывает метрику в AppState,
  *           getColor/попап читают текущую метрику из AppState.
+ *
+ * fix(#15): по клику на полигон округа показывается попап с названием
+ *           и кнопкой «Перейти в округ». Прямая навигация убрана.
  */
 
 var map;
@@ -74,6 +77,28 @@ function initMap(geoData) {
 
   normalizeFeatureNames();
 
+  /**
+   * Строит HTML-содержимое попапа для округа.
+   * Кнопка «Перейти в округ» вызывает openDistrict через
+   * глобальный обработчик window._mapGoDistrict.
+   */
+  function buildPopupContent(name, metric, cfg) {
+    var districts = AppState.get('districts') || {};
+    var val = districts[name] ? districts[name][metric] : null;
+    // Сохраняем имя в глобальном scope для доступа из onclick
+    window._mapGoDistrict = function () { openDistrict(name); };
+    return '<div style="min-width:160px">' +
+      '<b style="font-size:13px">' + name + '</b><br>' +
+      '<span style="font-size:12px;color:#666">' + cfg.label + ': ' + cfg.format(val) + '</span><br>' +
+      '<button ' +
+        'onclick="window._mapGoDistrict()" ' +
+        'style="margin-top:8px;padding:4px 12px;background:#01696f;color:#fff;' +
+        'border:none;border-radius:4px;cursor:pointer;font-size:12px">' +
+        'Перейти в округ' +
+      '</button>' +
+    '</div>';
+  }
+
   function render() {
     var metric = getCurrentMetric();
     var cfg = METRIC_CONFIG[metric] || METRIC_CONFIG.zp;
@@ -91,12 +116,15 @@ function initMap(geoData) {
       onEachFeature: function (feature, lyr) {
         var p    = feature.properties;
         var name = p.name_clean || p.name;
-        var val  = p[metric];
-        lyr.bindPopup(
-          '<b>' + name + '</b><br>' +
-          cfg.label + ': ' + cfg.format(val)
-        );
-        lyr.on('click', function () { openDistrict(name); });
+
+        // fix(#15): клик открывает попап с подтверждением, навигация — только по кнопке
+        lyr.on('click', function (e) {
+          var currentMetric = getCurrentMetric();
+          var currentCfg = METRIC_CONFIG[currentMetric] || METRIC_CONFIG.zp;
+          lyr.unbindPopup();
+          lyr.bindPopup(buildPopupContent(name, currentMetric, currentCfg));
+          lyr.openPopup(e.latlng);
+        });
       }
     }).addTo(map);
     map.fitBounds(layer.getBounds(), { padding: [8, 8] });
