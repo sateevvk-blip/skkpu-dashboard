@@ -8,6 +8,8 @@
  * FIXES (issue #11):
  * fix(#22): исправлен оборванный .map(function(o){...}) в renderDistrict —
  *           блок теперь корректно присвоен innerHTML таблицы go-table.
+ * fix(#24): исправлен getElementById('go-table') → 'tb-orgs' (несоответствие
+ *           id в HTML и JS приводило к null-ref и пустой таблице организаций).
  */
 
 function openDistrict(rawName) {
@@ -101,8 +103,9 @@ function renderDistrict(dname, displayName) {
   }).join('');
 
   // fix(#22): восстановлен оборванный .map(function(o){...}) —
-  // присвоение innerHTML таблицы организаций.
-  document.getElementById('go-table').innerHTML = orgs.map(function (o) {
+  // fix(#24): исправлен getElementById('go-table') → getElementById('tb-orgs') —
+  //           в index.html тело таблицы организаций имеет id="tb-orgs".
+  document.getElementById('tb-orgs').innerHTML = orgs.map(function (o) {
     var orgIdDisplay = String(o.id || o.orgId || '').padStart(4, '0');
     return '<tr onclick=\'openOrg(' + JSON.stringify(o).replace(/'/g, "&#39;") + ')\'>' +
       '<td style="font-family:monospace;color:var(--color-text-muted,#888);white-space:nowrap">' + orgIdDisplay + '</td>' +
