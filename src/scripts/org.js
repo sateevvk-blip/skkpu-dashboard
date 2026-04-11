@@ -13,6 +13,14 @@
  *   (показываем всех сотрудников), colspan в пустом состоянии = 13.
  *
  * Баг 3 (превентивный): null-guard на #org-kpis перед записью innerHTML.
+ *
+ * FIXES (issue #7):
+ *
+ * Баг 4: e.grade → e.className в _renderTeachersTable (поле не существовало).
+ *
+ * Баг 5: Нормализация orgId — приводим оба идентификатора
+ *   к строке с ведущими нулями через padStart(4, '0'),
+ *   чтобы «401» из districts.json совпадал с «0401» из teachers.json.
  */
 
 function openOrg(org) {
@@ -76,8 +84,11 @@ function renderOrg(org, districtRawName) {
   }
 
   // ── Таблица сотрудников #tb-teachers ──────────────────────────────────────
+  // FIX Баг 5: нормализуем orgId — приводим к строке с ведущими нулями,
+  // чтобы «401» и «0401» считались одним и тем же идентификатором.
+  var orgIdNorm = String(org.id || org.orgId || '').padStart(4, '0');
   var employees = (AppState.get('employees') || []).filter(function (e) {
-    return String(e.orgId) === String(org.id || org.orgId || '');
+    return String(e.orgId || '').padStart(4, '0') === orgIdNorm;
   });
   _renderTeachersTable(employees);
 
@@ -137,7 +148,7 @@ function _renderTeachersTable(employees) {
       '<td>' + (e.loadType      || '—') + '</td>',   // Нагрузка
       '<td>' + load                     + '</td>',   // Ставка
       '<td>' + (e.subject       || '—') + '</td>',   // Предмет
-      '<td>' + (e.grade         || '—') + '</td>',   // Класс
+      '<td>' + (e.className     || '—') + '</td>',   // FIX Баг 4: e.grade → e.className
       '<td>' + cap                      + '</td>',   // Напол.
       '<td>' + hrs                      + '</td>',   // Часы/нед
       '<td>' + sal                      + '</td>',   // ЗП
