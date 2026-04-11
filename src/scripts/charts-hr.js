@@ -3,10 +3,16 @@
  *
  * Логика из patch-stage2-charts-hr.js поглощена здесь.
  * Данные читаются из AppState.
+ *
+ * FIX (Проблема 1): добавлен null-guard — если GEO ещё не загружен,
+ * функция завершается без ошибки. Вызов renderMoHr() уже прописан
+ * в navigation.js → moTab('hr'), поэтому дополнительных изменений
+ * в навигации не требуется.
  */
 
 function renderMoHr() {
-  const GEO   = AppState.get('geo');
+  const GEO = AppState.get('geo');
+  if (!GEO || !GEO.features) return;          // guard: данные ещё не загружены
   const feats = GEO.features;
 
   function dLabel(f) { return f.properties.name_clean || f.properties.name; }
