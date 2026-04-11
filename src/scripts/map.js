@@ -1,8 +1,8 @@
 /**
  * map.js — Leaflet-карта с фильтрами и метриками.
  *
- * Логика из patch-stage3-map.js поглощена здесь.
- * Данные читаются из AppState.
+ * fix(#14): обработчик change фильтра записывает метрику в AppState,
+ *           getColor/попап читают текущую метрику из AppState.
  */
 
 var map;
@@ -11,27 +11,58 @@ function initMap(geoData) {
   map = L.map('map', { zoomControl: true, attributionControl: false });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 13 }).addTo(map);
 
-  let layer = null;
-  const metric = 'zp';
+  var layer = null;
 
-  function getColor(val) {
-    return val >= 72000 ? '#10b981' : val >= 66000 ? '#f59e0b' : '#ef4444';
+  // Конфиг метрик — пороги из docs/role.md
+  var METRIC_CONFIG = {
+    zp: {
+      label: 'Средняя ЗП',
+      thresholds: [50000, 75000],
+      format: function (v) { return v ? fmtK(v) : '—'; }
+    },
+    staffingRate: {
+      label: 'Комплектация',
+      thresholds: [0.85, 0.95],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    age: {
+      label: 'Средний возраст',
+      thresholds: [35, 50],
+      format: function (v) { return v != null ? v.toFixed(1) + ' лет' : '—'; }
+    },
+    experience: {
+      label: 'Средний стаж',
+      thresholds: [3, 7],
+      format: function (v) { return v != null ? v.toFixed(1) + ' лет' : '—'; }
+    }
+  };
+
+  function getCurrentMetric() {
+    return AppState.get('mapMetric') || 'zp';
+  }
+
+  function getColor(val, metricKey) {
+    var cfg = METRIC_CONFIG[metricKey] || METRIC_CONFIG.zp;
+    var t0 = cfg.thresholds[0];
+    var t1 = cfg.thresholds[1];
+    if (val == null || isNaN(val)) return '#9ca3af';
+    return val >= t1 ? '#10b981' : val >= t0 ? '#f59e0b' : '#ef4444';
   }
 
   function normalizeFeatureNames() {
-    const districts = AppState.get('districts');
+    var districts = AppState.get('districts');
     if (!districts) return;
-    const dKeys = Object.keys(districts);
+    var dKeys = Object.keys(districts);
     geoData.features.forEach(function (f) {
-      const p = f.properties || {};
-      if (p.name_clean && !/^\u041eкруг\s+\d+$/i.test(p.name_clean)) return;
-      const candidate = p.name_clean || p.name || '';
-      if (/^\u041eкруг\s+\d+$/i.test(candidate)) {
-        const num = parseInt(candidate.replace(/\D+/g, ''), 10) - 1;
+      var p = f.properties || {};
+      if (p.name_clean && !/^Округ\s+\d+$/i.test(p.name_clean)) return;
+      var candidate = p.name_clean || p.name || '';
+      if (/^Округ\s+\d+$/i.test(candidate)) {
+        var num = parseInt(candidate.replace(/\D+/g, ''), 10) - 1;
         if (dKeys[num]) p.name_clean = dKeys[num];
       } else {
-        const lower = candidate.toLowerCase();
-        const match = dKeys.find(function (k) {
+        var lower = candidate.toLowerCase();
+        var match = dKeys.find(function (k) {
           return k.toLowerCase() === lower ||
                  k.toLowerCase().indexOf(lower) !== -1 ||
                  lower.indexOf(k.toLowerCase()) !== -1;
@@ -44,25 +75,41 @@ function initMap(geoData) {
   normalizeFeatureNames();
 
   function render() {
+    var metric = getCurrentMetric();
+    var cfg = METRIC_CONFIG[metric] || METRIC_CONFIG.zp;
     if (layer) map.removeLayer(layer);
     layer = L.geoJSON(geoData, {
       style: function (feature) {
-        const val = feature.properties[metric] || 0;
-        return { fillColor: getColor(val), color: '#fff', weight: 1, fillOpacity: 0.7 };
+        var val = feature.properties[metric];
+        return {
+          fillColor: getColor(val, metric),
+          color: '#fff',
+          weight: 1,
+          fillOpacity: 0.7
+        };
       },
       onEachFeature: function (feature, lyr) {
-        const p    = feature.properties;
-        const name = p.name_clean || p.name;
+        var p    = feature.properties;
+        var name = p.name_clean || p.name;
+        var val  = p[metric];
         lyr.bindPopup(
           '<b>' + name + '</b><br>' +
-          'ЗП: ' + (p.zp ? fmtK(p.zp) : '—') + '<br>' +
-          'АХР: ' + (p.ahr || '—') + '%<br>' +
-          'Комплектация: ' + (p.cap || '—') + '%'
+          cfg.label + ': ' + cfg.format(val)
         );
         lyr.on('click', function () { openDistrict(name); });
       }
     }).addTo(map);
     map.fitBounds(layer.getBounds(), { padding: [8, 8] });
+  }
+
+  // Обработчик фильтра
+  var filterEl = document.getElementById('map-filter');
+  if (filterEl) {
+    AppState.set('mapMetric', filterEl.value || 'zp');
+    filterEl.addEventListener('change', function () {
+      AppState.set('mapMetric', this.value);
+      render();
+    });
   }
 
   render();
