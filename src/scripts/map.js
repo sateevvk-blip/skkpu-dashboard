@@ -9,9 +9,16 @@
  *
  * fix(#22): кнопка «Перейти в округ» теперь навешивается через
  *           L.DomEvent.on в событии popupopen, а не через onclick-атрибут.
+ *
+ * fix(#26): реализованы глобальные функции filterMap() и setMetric(),
+ *           вызываемые кнопками .mf-btn в index.html.
+ *           Удалён поиск несуществующего #map-filter (<select>).
  */
 
 var map;
+
+// Активный фильтр зоны: '' | 'r' | 'y' | 'g'
+var _activeZone = '';
 
 function initMap(geoData) {
   map = L.map('map', { zoomControl: true, attributionControl: false });
@@ -40,6 +47,36 @@ function initMap(geoData) {
       label: 'Средний стаж',
       thresholds: [3, 7],
       format: function (v) { return v != null ? v.toFixed(1) + ' лет' : '—'; }
+    },
+    ahr: {
+      label: 'АХР / пед.',
+      thresholds: [0.25, 0.35],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    cap: {
+      label: 'Комплектация',
+      thresholds: [0.70, 0.85],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    ext: {
+      label: 'Внеурочка',
+      thresholds: [0.20, 0.30],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    bload: {
+      label: 'Загрузка зданий',
+      thresholds: [0.50, 0.80],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    staffing: {
+      label: 'Укомплект-ть',
+      thresholds: [0.85, 0.95],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
+    },
+    turnover: {
+      label: 'Текучесть',
+      thresholds: [0.05, 0.07],
+      format: function (v) { return v != null ? (v * 100).toFixed(1) + '%' : '—'; }
     }
   };
 
@@ -53,6 +90,19 @@ function initMap(geoData) {
     var t1 = cfg.thresholds[1];
     if (val == null || isNaN(val)) return '#9ca3af';
     return val >= t1 ? '#10b981' : val >= t0 ? '#f59e0b' : '#ef4444';
+  }
+
+  /**
+   * Определяет зону полигона: 'r' | 'y' | 'g' | null
+   */
+  function getZone(val, metricKey) {
+    var cfg = METRIC_CONFIG[metricKey] || METRIC_CONFIG.zp;
+    var t0 = cfg.thresholds[0];
+    var t1 = cfg.thresholds[1];
+    if (val == null || isNaN(val)) return null;
+    if (val >= t1) return 'g';
+    if (val >= t0) return 'y';
+    return 'r';
   }
 
   function normalizeFeatureNames() {
@@ -103,8 +153,14 @@ function initMap(geoData) {
   function render() {
     var metric = getCurrentMetric();
     var cfg = METRIC_CONFIG[metric] || METRIC_CONFIG.zp;
+    var zone = _activeZone;
     if (layer) map.removeLayer(layer);
     layer = L.geoJSON(geoData, {
+      filter: function (feature) {
+        if (!zone) return true;
+        var val = feature.properties[metric];
+        return getZone(val, metric) === zone;
+      },
       style: function (feature) {
         var val = feature.properties[metric];
         return {
@@ -139,15 +195,41 @@ function initMap(geoData) {
     map.fitBounds(layer.getBounds(), { padding: [8, 8] });
   }
 
-  // Обработчик фильтра
-  var filterEl = document.getElementById('map-filter');
-  if (filterEl) {
-    AppState.set('mapMetric', filterEl.value || 'zp');
-    filterEl.addEventListener('change', function () {
-      AppState.set('mapMetric', this.value);
-      render();
-    });
-  }
+  // Сохраняем render в window для вызова из filterMap/setMetric
+  window._mapRender = render;
+
+  // Инициализируем AppState текущей метрикой
+  AppState.set('mapMetric', AppState.get('mapMetric') || 'zp');
 
   render();
+}
+
+/**
+ * fix(#26): Фильтр по зоне (🔴/🟡/🟢/все).
+ * Вызывается кнопками .mf-btn в .map-filters (index.html).
+ * @param {string} zone  — '' | 'r' | 'y' | 'g'
+ * @param {HTMLElement} btn
+ */
+function filterMap(zone, btn) {
+  _activeZone = zone;
+  // Подсветка активной кнопки
+  var btns = document.querySelectorAll('.map-filters .mf-btn');
+  btns.forEach(function (b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  if (typeof window._mapRender === 'function') window._mapRender();
+}
+
+/**
+ * fix(#26): Переключение метрики карты.
+ * Вызывается кнопками .mf-btn в .map-metrics (index.html).
+ * @param {string} metric — ключ из METRIC_CONFIG
+ * @param {HTMLElement} btn
+ */
+function setMetric(metric, btn) {
+  AppState.set('mapMetric', metric);
+  // Подсветка активной кнопки
+  var btns = document.querySelectorAll('.map-metrics .mf-btn');
+  btns.forEach(function (b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  if (typeof window._mapRender === 'function') window._mapRender();
 }
