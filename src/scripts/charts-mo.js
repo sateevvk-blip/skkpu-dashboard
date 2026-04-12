@@ -4,7 +4,117 @@
  * Данные читаются из AppState. Вся логика из patch-stage2-charts-mo.js
  * и patch-stage3-subbar.js поглощена здесь.
  * patch-stage4-prob.js поглощён: renderMoProb вызывается при смене таба.
+ *
+ * feat: сортировка по колонкам таблицы #tb-districts (Issue sortable-salary-table).
  */
+
+// ─── Состояние сортировки таблицы округов ───────────────────────────────────
+var _salTableSort = { col: 'status', dir: 'asc' };
+
+/**
+ * Возвращает числовое значение для сортировки по заданной колонке.
+ * @param {object} props — f.properties одного feature
+ * @param {string} col   — ключ колонки
+ */
+function _salSortValue(props, col) {
+  var statusOrder = { r: 0, y: 1, g: 2 };
+  switch (col) {
+    case 'name':   return (props.name_clean || props.name || '').toLowerCase();
+    case 'zp':     return props.zp || 0;
+    case 'diff':   return (props.zp || 0) - TARGET;
+    case 'ahr':    return props.ahr || 0;
+    case 'cap':    return props.cap || 0;
+    case 'status': return statusOrder[props.r] !== undefined ? statusOrder[props.r] : 9;
+    default:       return 0;
+  }
+}
+
+/**
+ * Рендерит (или перерисовывает) tbody таблицы #tb-districts
+ * и обновляет иконки в заголовках.
+ * @param {Array} feats — массив GeoJSON features
+ */
+function buildDistrictsTable(feats) {
+  var col = _salTableSort.col;
+  var dir = _salTableSort.dir;
+
+  var sorted = feats.slice().sort(function (a, b) {
+    var va = _salSortValue(a.properties, col);
+    var vb = _salSortValue(b.properties, col);
+    var cmp;
+    if (typeof va === 'string') {
+      cmp = va < vb ? -1 : va > vb ? 1 : 0;
+    } else {
+      // Для числовых: внутри одного статуса — вторичная сортировка по ЗП ASC
+      cmp = va - vb;
+      if (cmp === 0 && col !== 'zp') cmp = (a.properties.zp || 0) - (b.properties.zp || 0);
+    }
+    return dir === 'asc' ? cmp : -cmp;
+  });
+
+  var tbody = document.getElementById('tb-districts');
+  if (!tbody) return;
+
+  tbody.innerHTML = sorted.map(function (f) {
+    var p = f.properties;
+    var n = p.name_clean || p.name;
+    return '<tr onclick="openDistrict(\'' + n.replace(/'/g, "\\'") + '\')">' +
+      '<td><b>' + n + '</b></td>' +
+      '<td style="font-weight:700;color:' + (p.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtK(p.zp) + '</td>' +
+      '<td style="color:' + (p.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtDiff(p.zp) + '</td>' +
+      '<td>' + p.ahr + '%</td><td>' + p.cap + '%</td><td>' + pill(p.r) + '</td></tr>';
+  }).join('');
+
+  // Обновляем иконки в заголовках
+  var ths = document.querySelectorAll('#tb-districts-head th[data-col]');
+  ths.forEach(function (th) {
+    var icon = th.querySelector('.sort-icon');
+    if (!icon) return;
+    if (th.dataset.col === col) {
+      icon.textContent = dir === 'asc' ? ' ▲' : ' ▼';
+      th.classList.add('th-sorted');
+    } else {
+      icon.textContent = ' ⇅';
+      th.classList.remove('th-sorted');
+    }
+  });
+}
+
+/**
+ * Инициализирует обработчики клика на заголовки таблицы.
+ * Вызывается один раз из renderMoSal() после первого рендера.
+ */
+function _initDistrictsTableSort(feats) {
+  var ths = document.querySelectorAll('#tb-districts-head th[data-col]');
+  if (!ths.length) return;
+  // Проверяем: уже навешаны?
+  if (ths[0]._sortInited) return;
+  ths[0]._sortInited = true;
+
+  ths.forEach(function (th) {
+    th.style.cursor = 'pointer';
+    th.style.userSelect = 'none';
+    // Добавляем иконку если ещё нет
+    if (!th.querySelector('.sort-icon')) {
+      var icon = document.createElement('span');
+      icon.className = 'sort-icon';
+      icon.textContent = ' ⇅';
+      icon.style.fontSize = '0.75em';
+      icon.style.opacity = '0.5';
+      th.appendChild(icon);
+    }
+    th.addEventListener('click', function () {
+      var clickedCol = th.dataset.col;
+      if (_salTableSort.col === clickedCol) {
+        _salTableSort.dir = _salTableSort.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        _salTableSort.col = clickedCol;
+        _salTableSort.dir = 'asc';
+      }
+      buildDistrictsTable(feats);
+    });
+  });
+}
 
 function renderMoSal() {
   const GEO       = AppState.get('geo');
@@ -76,20 +186,11 @@ function renderMoSal() {
     }]
   });
 
-  // Таблица округов
-  const sorted = feats.slice().sort(function (a, b) {
-    const o = { r: 0, y: 1, g: 2 };
-    return o[a.properties.r] - o[b.properties.r] || a.properties.zp - b.properties.zp;
-  });
-  document.getElementById('tb-districts').innerHTML = sorted.map(function (f) {
-    const p = f.properties;
-    const n = p.name_clean || p.name;
-    return '<tr onclick="openDistrict(\'' + n.replace(/'/g, "\\'") + '\')">' +
-      '<td><b>' + n + '</b></td>' +
-      '<td style="font-weight:700;color:' + (p.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtK(p.zp) + '</td>' +
-      '<td style="color:' + (p.zp >= TARGET ? '#059669' : '#dc2626') + '">' + fmtDiff(p.zp) + '</td>' +
-      '<td>' + p.ahr + '%</td><td>' + p.cap + '%</td><td>' + pill(p.r) + '</td></tr>';
-  }).join('');
+  // Таблица округов с сортировкой
+  // Сброс к сортировке по умолчанию при каждом вызове renderMoSal
+  _salTableSort = { col: 'status', dir: 'asc' };
+  buildDistrictsTable(feats);
+  _initDistrictsTableSort(feats);
 }
 
 function renderMoSub() {

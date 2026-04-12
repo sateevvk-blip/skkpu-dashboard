@@ -131,10 +131,17 @@
     </div>
     <div class="card mt14">
       <div class="card-title">Рейтинг округов по средней ЗП</div>
-      <div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО</div>
+      <div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО. Клик по заголовку колонки — сортировка.</div>
       <div class="tbl-wrap">
         <table class="tbl">
-          <thead><tr><th>Округ</th><th>Ср. ЗП</th><th>Отклонение</th><th>АХР%</th><th>Компл.</th><th>Статус</th></tr></thead>
+          <thead id="tb-districts-head"><tr>
+            <th data-col="name">Округ</th>
+            <th data-col="zp">Ср. ЗП</th>
+            <th data-col="diff">Отклонение</th>
+            <th data-col="ahr">АХР%</th>
+            <th data-col="cap">Компл.</th>
+            <th data-col="status">Статус</th>
+          </tr></thead>
           <tbody id="tb-districts"></tbody>
         </table>
       </div>
