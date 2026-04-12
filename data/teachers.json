@@ -1,1 +1,27 @@
-placeholder_replaced_below
+{
+  "employees": [
+    {
+      "name": "Соколова Марина Николаевна",
+      "districtId": "Мытищи",
+      "orgName": "ГБОУ «Школа-интернат № 19»",
+      "educationType": "общее",
+      "staffCategory": "педагогические работники",
+      "position": "Учитель английского языка",
+      "positionType": "основная",
+      "loadType": "основная",
+      "loadRate": 1.0,
+      "subject": "Английский язык",
+      "className": "5-Б",
+      "classCapacity": 29,
+      "weeklyHours": 18,
+      "salary": 63674,
+      "orgId": "2419",
+      "age": 22,
+      "experience": 1,
+      "staffingRate": 0.7,
+      "employmentStatus": "active",
+      "hiredAt": "2021-11-04",
+      "dismissedAt": null
+    }
+  ]
+}
