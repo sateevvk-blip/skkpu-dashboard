@@ -18,7 +18,10 @@
       "orgId": "2419",
       "age": 22,
       "experience": 1,
-      "staffingRate": 0.7
+      "staffingRate": 0.7,
+      "employmentStatus": "active",
+      "hiredAt": "2021-11-04",
+      "dismissedAt": null
     },
     {
       "name": "Сидоров Максим Юрьевич",
@@ -38,7 +41,10 @@
       "orgId": "0401",
       "age": 33,
       "experience": 10,
-      "staffingRate": 0.85
+      "staffingRate": 0.85,
+      "employmentStatus": "active",
+      "hiredAt": "2020-06-14",
+      "dismissedAt": null
     },
     {
       "name": "Сидоров Максим Юрьевич",
@@ -58,7 +64,10 @@
       "orgId": "0401",
       "age": 33,
       "experience": 10,
-      "staffingRate": 0.85
+      "staffingRate": 0.85,
+      "employmentStatus": "active",
+      "hiredAt": "2020-06-14",
+      "dismissedAt": null
     },
     {
       "name": "Попов Дмитрий Андреевич",
@@ -78,7 +87,10 @@
       "orgId": "4505",
       "age": 53,
       "experience": 26,
-      "staffingRate": 0.9
+      "staffingRate": 0.9,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2021-04-16",
+      "dismissedAt": "2024-07-22"
     },
     {
       "name": "Лебедева Оксана Сергеевна",
@@ -98,7 +110,10 @@
       "orgId": "2404",
       "age": 38,
       "experience": 14,
-      "staffingRate": 0.72
+      "staffingRate": 0.72,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-02-27",
+      "dismissedAt": "2025-12-19"
     },
     {
       "name": "Захаров Игорь Александрович",
@@ -118,7 +133,10 @@
       "orgId": "1302",
       "age": 48,
       "experience": 22,
-      "staffingRate": 0.78
+      "staffingRate": 0.78,
+      "employmentStatus": "active",
+      "hiredAt": "2022-03-12",
+      "dismissedAt": null
     },
     {
       "name": "Морозова Валентина Николаевна",
@@ -138,7 +156,10 @@
       "orgId": "4503",
       "age": 55,
       "experience": 30,
-      "staffingRate": 0.88
+      "staffingRate": 0.88,
+      "employmentStatus": "active",
+      "hiredAt": "2022-10-09",
+      "dismissedAt": null
     },
     {
       "name": "Морозова Валентина Николаевна",
@@ -158,7 +179,10 @@
       "orgId": "4502",
       "age": 55,
       "experience": 30,
-      "staffingRate": 0.75
+      "staffingRate": 0.75,
+      "employmentStatus": "active",
+      "hiredAt": "2022-10-09",
+      "dismissedAt": null
     },
     {
       "name": "Зайцева Мария Петровна",
@@ -178,7 +202,10 @@
       "orgId": "1306",
       "age": 29,
       "experience": 5,
-      "staffingRate": 0.93
+      "staffingRate": 0.93,
+      "employmentStatus": "active",
+      "hiredAt": "2022-09-05",
+      "dismissedAt": null
     },
     {
       "name": "Никитина Екатерина Николаевна",
@@ -198,7 +225,10 @@
       "orgId": "5009",
       "age": 36,
       "experience": 11,
-      "staffingRate": 0.82
+      "staffingRate": 0.82,
+      "employmentStatus": "active",
+      "hiredAt": "2018-05-23",
+      "dismissedAt": null
     },
     {
       "name": "Титова Ольга Ивановна",
@@ -218,7 +248,10 @@
       "orgId": "1301",
       "age": 44,
       "experience": 19,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "active",
+      "hiredAt": "2021-07-19",
+      "dismissedAt": null
     },
     {
       "name": "Попов Артём Александрович",
@@ -238,7 +271,10 @@
       "orgId": "2718",
       "age": 31,
       "experience": 8,
-      "staffingRate": 0.71
+      "staffingRate": 0.71,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-11-08",
+      "dismissedAt": "2024-06-12"
     },
     {
       "name": "Степанова Людмила Сергеевна",
@@ -258,7 +294,10 @@
       "orgId": "1607",
       "age": 45,
       "experience": 20,
-      "staffingRate": 0.67
+      "staffingRate": 0.67,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-01-03",
+      "dismissedAt": "2024-10-11"
     },
     {
       "name": "Степанова Людмила Сергеевна",
@@ -278,7 +317,10 @@
       "orgId": "1601",
       "age": 45,
       "experience": 20,
-      "staffingRate": 0.87
+      "staffingRate": 0.87,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-01-03",
+      "dismissedAt": "2024-10-11"
     },
     {
       "name": "Попова Оксана Ивановна",
@@ -298,7 +340,10 @@
       "orgId": "1601",
       "age": 41,
       "experience": 16,
-      "staffingRate": 0.87
+      "staffingRate": 0.87,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2023-05-17",
+      "dismissedAt": "2024-08-08"
     },
     {
       "name": "Попова Оксана Ивановна",
@@ -318,7 +363,10 @@
       "orgId": "1602",
       "age": 41,
       "experience": 16,
-      "staffingRate": 0.91
+      "staffingRate": 0.91,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2023-05-17",
+      "dismissedAt": "2024-08-08"
     },
     {
       "name": "Новикова Ольга Михайловна",
@@ -338,7 +386,10 @@
       "orgId": "5004",
       "age": 39,
       "experience": 15,
-      "staffingRate": 0.76
+      "staffingRate": 0.76,
+      "employmentStatus": "active",
+      "hiredAt": "2021-01-22",
+      "dismissedAt": null
     },
     {
       "name": "Федорова Надежда Владимировна",
@@ -358,7 +409,10 @@
       "orgId": "1901",
       "age": 47,
       "experience": 23,
-      "staffingRate": 0.79
+      "staffingRate": 0.79,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-07-03",
+      "dismissedAt": "2025-01-24"
     },
     {
       "name": "Новикова Надежда Павловна",
@@ -378,7 +432,10 @@
       "orgId": "2709",
       "age": 34,
       "experience": 9,
-      "staffingRate": 0.95
+      "staffingRate": 0.95,
+      "employmentStatus": "active",
+      "hiredAt": "2023-09-01",
+      "dismissedAt": null
     },
     {
       "name": "Попова Людмила Александровна",
@@ -398,7 +455,10 @@
       "orgId": "2218",
       "age": 52,
       "experience": 27,
-      "staffingRate": 0.83
+      "staffingRate": 0.83,
+      "employmentStatus": "active",
+      "hiredAt": "2019-04-30",
+      "dismissedAt": null
     },
     {
       "name": "Титова Ирина Петровна",
@@ -418,7 +478,10 @@
       "orgId": "0501",
       "age": 57,
       "experience": 31,
-      "staffingRate": 0.69
+      "staffingRate": 0.69,
+      "employmentStatus": "active",
+      "hiredAt": "2020-12-15",
+      "dismissedAt": null
     },
     {
       "name": "Соколова Мария Андреевна",
@@ -438,7 +501,10 @@
       "orgId": "2209",
       "age": 27,
       "experience": 4,
-      "staffingRate": 0.96
+      "staffingRate": 0.96,
+      "employmentStatus": "active",
+      "hiredAt": "2022-08-22",
+      "dismissedAt": null
     },
     {
       "name": "Титова Вера Андреевна",
@@ -458,7 +524,10 @@
       "orgId": "2204",
       "age": 33,
       "experience": 8,
-      "staffingRate": 0.74
+      "staffingRate": 0.74,
+      "employmentStatus": "active",
+      "hiredAt": "2021-03-07",
+      "dismissedAt": null
     },
     {
       "name": "Кузнецов Виктор Иванович",
@@ -478,7 +547,10 @@
       "orgId": "1619",
       "age": 50,
       "experience": 24,
-      "staffingRate": 0.73
+      "staffingRate": 0.73,
+      "employmentStatus": "active",
+      "hiredAt": "2022-11-14",
+      "dismissedAt": null
     },
     {
       "name": "Макарова Диана Владимировна",
@@ -498,7 +570,10 @@
       "orgId": "4509",
       "age": 28,
       "experience": 5,
-      "staffingRate": 0.81
+      "staffingRate": 0.81,
+      "employmentStatus": "active",
+      "hiredAt": "2018-10-06",
+      "dismissedAt": null
     },
     {
       "name": "Макарова Диана Владимировна",
@@ -518,7 +593,10 @@
       "orgId": "4507",
       "age": 28,
       "experience": 5,
-      "staffingRate": 0.99
+      "staffingRate": 0.99,
+      "employmentStatus": "active",
+      "hiredAt": "2018-10-06",
+      "dismissedAt": null
     },
     {
       "name": "Громов Константин Петрович",
@@ -538,7 +616,10 @@
       "orgId": "5004",
       "age": 42,
       "experience": 18,
-      "staffingRate": 0.76
+      "staffingRate": 0.76,
+      "employmentStatus": "active",
+      "hiredAt": "2021-09-12",
+      "dismissedAt": null
     },
     {
       "name": "Федорова Диана Петровна",
@@ -558,7 +639,10 @@
       "orgId": "1408",
       "age": 35,
       "experience": 11,
-      "staffingRate": 0.92
+      "staffingRate": 0.92,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-12-27",
+      "dismissedAt": "2024-03-21"
     },
     {
       "name": "Федорова Диана Петровна",
@@ -578,7 +662,10 @@
       "orgId": "1418",
       "age": 35,
       "experience": 11,
-      "staffingRate": 0.65
+      "staffingRate": 0.65,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-12-27",
+      "dismissedAt": "2024-10-27"
     },
     {
       "name": "Смирнова Тамара Ивановна",
@@ -598,7 +685,10 @@
       "orgId": "2205",
       "age": 46,
       "experience": 21,
-      "staffingRate": 0.98
+      "staffingRate": 0.98,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-03-14",
+      "dismissedAt": "2025-09-25"
     },
     {
       "name": "Смирнова Тамара Ивановна",
@@ -618,7 +708,10 @@
       "orgId": "2201",
       "age": 46,
       "experience": 21,
-      "staffingRate": 0.86
+      "staffingRate": 0.86,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-03-14",
+      "dismissedAt": "2025-09-25"
     },
     {
       "name": "Лебедева Анна Николаевна",
@@ -638,7 +731,10 @@
       "orgId": "1603",
       "age": 26,
       "experience": 3,
-      "staffingRate": 0.77
+      "staffingRate": 0.77,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2021-04-11",
+      "dismissedAt": "2024-07-15"
     },
     {
       "name": "Новикова Анна Юрьевна",
@@ -658,7 +754,10 @@
       "orgId": "5007",
       "age": 32,
       "experience": 7,
-      "staffingRate": 0.89
+      "staffingRate": 0.89,
+      "employmentStatus": "active",
+      "hiredAt": "2023-02-19",
+      "dismissedAt": null
     },
     {
       "name": "Новикова Анна Юрьевна",
@@ -678,7 +777,10 @@
       "orgId": "5006",
       "age": 32,
       "experience": 7,
-      "staffingRate": 0.94
+      "staffingRate": 0.94,
+      "employmentStatus": "active",
+      "hiredAt": "2023-02-19",
+      "dismissedAt": null
     },
     {
       "name": "Попова Наталья Андреевна",
@@ -698,7 +800,10 @@
       "orgId": "1902",
       "age": 40,
       "experience": 16,
-      "staffingRate": 0.68
+      "staffingRate": 0.68,
+      "employmentStatus": "active",
+      "hiredAt": "2020-07-28",
+      "dismissedAt": null
     },
     {
       "name": "Орлов Василий Иванович",
@@ -718,7 +823,10 @@
       "orgId": "1901",
       "age": 56,
       "experience": 29,
-      "staffingRate": 0.79
+      "staffingRate": 0.79,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2023-07-07",
+      "dismissedAt": "2024-03-22"
     },
     {
       "name": "Белов Денис Михайлович",
@@ -738,7 +846,10 @@
       "orgId": "1604",
       "age": 37,
       "experience": 12,
-      "staffingRate": 0.8
+      "staffingRate": 0.8,
+      "employmentStatus": "active",
+      "hiredAt": "2023-03-21",
+      "dismissedAt": null
     },
     {
       "name": "Морозова Ольга Николаевна",
@@ -758,7 +869,10 @@
       "orgId": "2206",
       "age": 43,
       "experience": 18,
-      "staffingRate": 0.66
+      "staffingRate": 0.66,
+      "employmentStatus": "active",
+      "hiredAt": "2021-07-28",
+      "dismissedAt": null
     },
     {
       "name": "Зайцев Владимир Павлович",
@@ -778,7 +892,10 @@
       "orgId": "4502",
       "age": 51,
       "experience": 25,
-      "staffingRate": 0.75
+      "staffingRate": 0.75,
+      "employmentStatus": "active",
+      "hiredAt": "2019-08-18",
+      "dismissedAt": null
     },
     {
       "name": "Смирнова Диана Сергеевна",
@@ -798,7 +915,10 @@
       "orgId": "0401",
       "age": 24,
       "experience": 2,
-      "staffingRate": 0.85
+      "staffingRate": 0.85,
+      "employmentStatus": "active",
+      "hiredAt": "2021-11-23",
+      "dismissedAt": null
     },
     {
       "name": "Макаров Виктор Владимирович",
@@ -818,7 +938,10 @@
       "orgId": "1407",
       "age": 48,
       "experience": 23,
-      "staffingRate": 0.84
+      "staffingRate": 0.84,
+      "employmentStatus": "active",
+      "hiredAt": "2020-01-31",
+      "dismissedAt": null
     },
     {
       "name": "Смирнова Галина Сергеевна",
@@ -838,7 +961,10 @@
       "orgId": "2702",
       "age": 61,
       "experience": 35,
-      "staffingRate": 0.71
+      "staffingRate": 0.71,
+      "employmentStatus": "active",
+      "hiredAt": "2019-11-13",
+      "dismissedAt": null
     },
     {
       "name": "Титов Олег Андреевич",
@@ -858,7 +984,10 @@
       "orgId": "2406",
       "age": 54,
       "experience": 29,
-      "staffingRate": 0.85
+      "staffingRate": 0.85,
+      "employmentStatus": "active",
+      "hiredAt": "2021-08-14",
+      "dismissedAt": null
     },
     {
       "name": "Петрова Светлана Александровна",
@@ -878,7 +1007,10 @@
       "orgId": "2706",
       "age": 30,
       "experience": 6,
-      "staffingRate": 0.78
+      "staffingRate": 0.78,
+      "employmentStatus": "active",
+      "hiredAt": "2023-12-11",
+      "dismissedAt": null
     },
     {
       "name": "Петрова Светлана Александровна",
@@ -898,7 +1030,10 @@
       "orgId": "2718",
       "age": 30,
       "experience": 6,
-      "staffingRate": 0.71
+      "staffingRate": 0.71,
+      "employmentStatus": "active",
+      "hiredAt": "2023-12-11",
+      "dismissedAt": null
     },
     {
       "name": "Морозова Людмила Сергеевна",
@@ -918,7 +1053,10 @@
       "orgId": "1303",
       "age": 49,
       "experience": 24,
-      "staffingRate": 0.82
+      "staffingRate": 0.82,
+      "employmentStatus": "active",
+      "hiredAt": "2022-05-10",
+      "dismissedAt": null
     },
     {
       "name": "Громов Дмитрий Николаевич",
@@ -938,7 +1076,10 @@
       "orgId": "2401",
       "age": 36,
       "experience": 12,
-      "staffingRate": 0.91
+      "staffingRate": 0.91,
+      "employmentStatus": "active",
+      "hiredAt": "2018-12-29",
+      "dismissedAt": null
     },
     {
       "name": "Степанова Анна Александровна",
@@ -958,7 +1099,10 @@
       "orgId": "3008",
       "age": 44,
       "experience": 19,
-      "staffingRate": 0.72
+      "staffingRate": 0.72,
+      "employmentStatus": "active",
+      "hiredAt": "2022-04-24",
+      "dismissedAt": null
     },
     {
       "name": "Кузнецов Олег Павлович",
@@ -978,7 +1122,10 @@
       "orgId": "1305",
       "age": 58,
       "experience": 32,
-      "staffingRate": 0.75
+      "staffingRate": 0.75,
+      "employmentStatus": "active",
+      "hiredAt": "2019-02-14",
+      "dismissedAt": null
     },
     {
       "name": "Кузнецов Олег Павлович",
@@ -998,7 +1145,10 @@
       "orgId": "1301",
       "age": 58,
       "experience": 32,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "active",
+      "hiredAt": "2019-02-14",
+      "dismissedAt": null
     },
     {
       "name": "Макаров Дмитрий Александрович",
@@ -1018,7 +1168,10 @@
       "orgId": "1902",
       "age": 39,
       "experience": 15,
-      "staffingRate": 0.68
+      "staffingRate": 0.68,
+      "employmentStatus": "active",
+      "hiredAt": "2023-06-22",
+      "dismissedAt": null
     },
     {
       "name": "Макаров Дмитрий Александрович",
@@ -1038,7 +1191,10 @@
       "orgId": "1901",
       "age": 39,
       "experience": 15,
-      "staffingRate": 0.79
+      "staffingRate": 0.79,
+      "employmentStatus": "active",
+      "hiredAt": "2023-06-22",
+      "dismissedAt": null
     },
     {
       "name": "Иванова Елена Петровна",
@@ -1058,7 +1214,10 @@
       "orgId": "0509",
       "age": 38,
       "experience": 14,
-      "staffingRate": 0.7
+      "staffingRate": 0.7,
+      "employmentStatus": "active",
+      "hiredAt": "2021-10-05",
+      "dismissedAt": null
     },
     {
       "name": "Иванова Диана Андреевна",
@@ -1078,7 +1237,10 @@
       "orgId": "2405",
       "age": 25,
       "experience": 3,
-      "staffingRate": 0.76
+      "staffingRate": 0.76,
+      "employmentStatus": "active",
+      "hiredAt": "2023-01-17",
+      "dismissedAt": null
     },
     {
       "name": "Степанова Юлия Александровна",
@@ -1098,7 +1260,10 @@
       "orgId": "1619",
       "age": 34,
       "experience": 10,
-      "staffingRate": 0.73
+      "staffingRate": 0.73,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-09-19",
+      "dismissedAt": "2024-10-03"
     },
     {
       "name": "Степанова Юлия Александровна",
@@ -1118,7 +1283,10 @@
       "orgId": "1618",
       "age": 34,
       "experience": 10,
-      "staffingRate": 0.93
+      "staffingRate": 0.93,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-09-19",
+      "dismissedAt": "2024-10-03"
     },
     {
       "name": "Смирнова Екатерина Александровна",
@@ -1138,7 +1306,10 @@
       "orgId": "1303",
       "age": 29,
       "experience": 5,
-      "staffingRate": 0.82
+      "staffingRate": 0.82,
+      "employmentStatus": "active",
+      "hiredAt": "2021-06-10",
+      "dismissedAt": null
     },
     {
       "name": "Козлова Галина Павловна",
@@ -1158,7 +1329,10 @@
       "orgId": "4518",
       "age": 63,
       "experience": 38,
-      "staffingRate": 0.9
+      "staffingRate": 0.9,
+      "employmentStatus": "active",
+      "hiredAt": "2022-06-05",
+      "dismissedAt": null
     },
     {
       "name": "Козлова Галина Павловна",
@@ -1178,7 +1352,10 @@
       "orgId": "4504",
       "age": 63,
       "experience": 38,
-      "staffingRate": 0.66
+      "staffingRate": 0.66,
+      "employmentStatus": "active",
+      "hiredAt": "2022-06-05",
+      "dismissedAt": null
     },
     {
       "name": "Никитина Екатерина Андреевна",
@@ -1198,7 +1375,10 @@
       "orgId": "2702",
       "age": 22,
       "experience": 0,
-      "staffingRate": 0.71
+      "staffingRate": 0.71,
+      "employmentStatus": "active",
+      "hiredAt": "2023-10-01",
+      "dismissedAt": null
     },
     {
       "name": "Петрова Ирина Владимировна",
@@ -1218,7 +1398,10 @@
       "orgId": "3001",
       "age": 35,
       "experience": 11,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "active",
+      "hiredAt": "2022-08-06",
+      "dismissedAt": null
     },
     {
       "name": "Петрова Ирина Владимировна",
@@ -1238,7 +1421,10 @@
       "orgId": "3019",
       "age": 35,
       "experience": 11,
-      "staffingRate": 0.78
+      "staffingRate": 0.78,
+      "employmentStatus": "active",
+      "hiredAt": "2022-08-06",
+      "dismissedAt": null
     },
     {
       "name": "Зайцева Юлия Ивановна",
@@ -1258,7 +1444,10 @@
       "orgId": "0402",
       "age": 27,
       "experience": 4,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "active",
+      "hiredAt": "2019-05-27",
+      "dismissedAt": null
     },
     {
       "name": "Федорова Надежда Михайловна",
@@ -1278,7 +1467,10 @@
       "orgId": "2405",
       "age": 52,
       "experience": 27,
-      "staffingRate": 0.76
+      "staffingRate": 0.76,
+      "employmentStatus": "active",
+      "hiredAt": "2018-07-06",
+      "dismissedAt": null
     },
     {
       "name": "Соколова Наталья Павловна",
@@ -1298,7 +1490,10 @@
       "orgId": "1402",
       "age": 46,
       "experience": 21,
-      "staffingRate": 0.78
+      "staffingRate": 0.78,
+      "employmentStatus": "active",
+      "hiredAt": "2020-04-23",
+      "dismissedAt": null
     },
     {
       "name": "Сидорова Татьяна Петровна",
@@ -1318,7 +1513,10 @@
       "orgId": "0402",
       "age": 42,
       "experience": 17,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "active",
+      "hiredAt": "2019-10-10",
+      "dismissedAt": null
     },
     {
       "name": "Сидорова Татьяна Петровна",
@@ -1338,7 +1536,10 @@
       "orgId": "0401",
       "age": 42,
       "experience": 17,
-      "staffingRate": 0.85
+      "staffingRate": 0.85,
+      "employmentStatus": "active",
+      "hiredAt": "2019-10-10",
+      "dismissedAt": null
     },
     {
       "name": "Титова Людмила Николаевна",
@@ -1358,7 +1559,10 @@
       "orgId": "1304",
       "age": 59,
       "experience": 33,
-      "staffingRate": 0.87
+      "staffingRate": 0.87,
+      "employmentStatus": "active",
+      "hiredAt": "2023-11-27",
+      "dismissedAt": null
     },
     {
       "name": "Морозова Надежда Петровна",
@@ -1378,7 +1582,10 @@
       "orgId": "4505",
       "age": 44,
       "experience": 19,
-      "staffingRate": 0.9
+      "staffingRate": 0.9,
+      "employmentStatus": "active",
+      "hiredAt": "2021-12-21",
+      "dismissedAt": null
     },
     {
       "name": "Новиков Андрей Сергеевич",
@@ -1398,7 +1605,10 @@
       "orgId": "3008",
       "age": 40,
       "experience": 15,
-      "staffingRate": 0.72
+      "staffingRate": 0.72,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-03-03",
+      "dismissedAt": "2025-05-26"
     },
     {
       "name": "Захарова Татьяна Владимировна",
@@ -1418,7 +1628,10 @@
       "orgId": "1419",
       "age": 48,
       "experience": 23,
-      "staffingRate": 0.81
+      "staffingRate": 0.81,
+      "employmentStatus": "active",
+      "hiredAt": "2019-01-27",
+      "dismissedAt": null
     },
     {
       "name": "Захарова Татьяна Владимировна",
@@ -1438,7 +1651,10 @@
       "orgId": "1406",
       "age": 48,
       "experience": 23,
-      "staffingRate": 0.96
+      "staffingRate": 0.96,
+      "employmentStatus": "active",
+      "hiredAt": "2019-01-27",
+      "dismissedAt": null
     },
     {
       "name": "Орлова Светлана Михайловна",
@@ -1458,7 +1674,10 @@
       "orgId": "1302",
       "age": 37,
       "experience": 13,
-      "staffingRate": 0.78
+      "staffingRate": 0.78,
+      "employmentStatus": "active",
+      "hiredAt": "2019-09-24",
+      "dismissedAt": null
     },
     {
       "name": "Степанова Наталья Александровна",
@@ -1478,7 +1697,10 @@
       "orgId": "0403",
       "age": 32,
       "experience": 8,
-      "staffingRate": 0.65
+      "staffingRate": 0.65,
+      "employmentStatus": "active",
+      "hiredAt": "2024-04-09",
+      "dismissedAt": null
     },
     {
       "name": "Титов Пётр Иванович",
@@ -1498,7 +1720,10 @@
       "orgId": "0403",
       "age": 45,
       "experience": 21,
-      "staffingRate": 0.65
+      "staffingRate": 0.65,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-08-16",
+      "dismissedAt": "2025-07-28"
     },
     {
       "name": "Титов Пётр Иванович",
@@ -1518,7 +1743,10 @@
       "orgId": "0402",
       "age": 45,
       "experience": 21,
-      "staffingRate": 0.97
+      "staffingRate": 0.97,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2020-08-16",
+      "dismissedAt": "2025-07-28"
     },
     {
       "name": "Кузнецова Татьяна Владимировна",
@@ -1538,7 +1766,10 @@
       "orgId": "2719",
       "age": 51,
       "experience": 26,
-      "staffingRate": 0.91
+      "staffingRate": 0.91,
+      "employmentStatus": "active",
+      "hiredAt": "2023-04-13",
+      "dismissedAt": null
     },
     {
       "name": "Иванова Светлана Владимировна",
@@ -1558,7 +1789,10 @@
       "orgId": "0505",
       "age": 29,
       "experience": 6,
-      "staffingRate": 0.81
+      "staffingRate": 0.81,
+      "employmentStatus": "active",
+      "hiredAt": "2024-03-08",
+      "dismissedAt": null
     },
     {
       "name": "Соколова Алёна Николаевна",
@@ -1578,7 +1812,10 @@
       "orgId": "5019",
       "age": 26,
       "experience": 3,
-      "staffingRate": 0.76
+      "staffingRate": 0.76,
+      "employmentStatus": "active",
+      "hiredAt": "2022-02-21",
+      "dismissedAt": null
     },
     {
       "name": "Смирнова Оксана Юрьевна",
@@ -1598,7 +1835,10 @@
       "salary": 73691,
       "age": 31,
       "experience": 7,
-      "staffingRate": 0.83
+      "staffingRate": 0.83,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2023-08-15",
+      "dismissedAt": "2024-02-18"
     },
     {
       "name": "Сидорова Полина Васильевна",
@@ -1618,7 +1858,10 @@
       "salary": 101826,
       "age": 47,
       "experience": 22,
-      "staffingRate": 0.92
+      "staffingRate": 0.92,
+      "employmentStatus": "active",
+      "hiredAt": "2021-02-01",
+      "dismissedAt": null
     },
     {
       "name": "Богданова Екатерина Леонидовна",
@@ -1638,7 +1881,10 @@
       "salary": 72162,
       "age": 38,
       "experience": 14,
-      "staffingRate": 0.88
+      "staffingRate": 0.88,
+      "employmentStatus": "dismissed",
+      "hiredAt": "2022-05-21",
+      "dismissedAt": "2025-01-05"
     },
     {
       "name": "Федорова Татьяна Аркадьевна",
@@ -1658,7 +1904,10 @@
       "salary": 63185,
       "age": 56,
       "experience": 30,
-      "staffingRate": 0.84
+      "staffingRate": 0.84,
+      "employmentStatus": "active",
+      "hiredAt": "2020-05-21",
+      "dismissedAt": null
     },
     {
       "name": "Алексеева Екатерина Леонидовна",
@@ -1678,7 +1927,10 @@
       "salary": 44376,
       "age": 24,
       "experience": 2,
-      "staffingRate": 0.88
+      "staffingRate": 0.88,
+      "employmentStatus": "active",
+      "hiredAt": "2023-07-02",
+      "dismissedAt": null
     },
     {
       "name": "Дмитриев Андрей Павлович",
@@ -1698,7 +1950,10 @@
       "salary": 88212,
       "age": 43,
       "experience": 18,
-      "staffingRate": 0.9
+      "staffingRate": 0.9,
+      "employmentStatus": "active",
+      "hiredAt": "2022-09-18",
+      "dismissedAt": null
     },
     {
       "name": "Никитин Антон Михайлович",
@@ -1718,7 +1973,10 @@
       "salary": 68035,
       "age": 35,
       "experience": 11,
-      "staffingRate": 0.77
+      "staffingRate": 0.77,
+      "employmentStatus": "active",
+      "hiredAt": "2020-10-18",
+      "dismissedAt": null
     },
     {
       "name": "Смирнова Оксана Сергеевна",
@@ -1738,7 +1996,10 @@
       "salary": 78788,
       "age": 33,
       "experience": 9,
-      "staffingRate": 0.8
+      "staffingRate": 0.8,
+      "employmentStatus": "active",
+      "hiredAt": "2021-05-28",
+      "dismissedAt": null
     },
     {
       "name": "Громова Виктория Николаевна",
@@ -1758,7 +2019,10 @@
       "salary": 60535,
       "age": 54,
       "experience": 15,
-      "staffingRate": 0.84
+      "staffingRate": 0.84,
+      "employmentStatus": "active",
+      "hiredAt": "2018-03-17",
+      "dismissedAt": null
     }
   ]
 }
