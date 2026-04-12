@@ -19,9 +19,13 @@
  * - ch-hrFired переименован в ch-hrTurnover (соответствует index.html).
  * - ch-hrTenure переименован в ch-hrExp (соответствует index.html).
  * - Добавлена renderMoHrVacancy() — средний срок закрытия вакансии по округам (ch-hrVacancy).
+ *
+ * FIX (Issue #25):
+ * - renderMoHr() переписана: суррогатные прокси заменены расчётом по dismissedAt.
+ * - График показывает % увольнений по периодам YYYY-MM.
  */
 
-// ── Вспомогательная функция: dispose + init ──────────────────────────────────
+// ── Вспомогательная функция: dispose + init ──────────────────────────────────────────
 function _initChart(elementId) {
   var el = document.getElementById(elementId);
   if (!el) return null;
@@ -33,7 +37,7 @@ function _initChart(elementId) {
   return el._ec;
 }
 
-// ── Группировка employees по districtId ─────────────────────────────────────
+// ── Группировка employees по districtId ───────────────────────────────────────────
 function _groupByDistrict(employees) {
   var byDistrict = {};
   employees.forEach(function (e) {
@@ -46,88 +50,65 @@ function _groupByDistrict(employees) {
 
 // ════════════════════════════════════════════════════════════════════════════
 // renderMoHr() — % уволившихся по периодам (ch-hrTurnover)
-// FIX #12: исправлен ID с ch-hrFired на ch-hrTurnover
+// FIX #25: заменяем суррогатные прокси реальным расчётом по dismissedAt
 // ════════════════════════════════════════════════════════════════════════════
 function renderMoHr() {
   var employees = AppState.get('employees');
   if (!employees || !employees.length) return;
 
-  var byDistrict = _groupByDistrict(employees);
-
-  var rows = Object.keys(byDistrict).map(function (name) {
-    var list  = byDistrict[name];
-    var total = list.length || 1;
-
-    var probation = list.filter(function (e) {
-      return e.loadType === 'основная' && parseFloat(e.loadRate || 1) < 1.0;
-    }).length;
-
-    var m6 = list.filter(function (e) {
-      return e.loadType === 'внеурочная';
-    }).length;
-
-    var y1 = list.filter(function (e) {
-      return e.salary && e.salary < 50000;
-    }).length;
-
-    return {
-      name:      name,
-      probation: Math.round((probation / total) * 1000) / 10,
-      m6:        Math.round((m6        / total) * 1000) / 10,
-      y1:        Math.round((y1        / total) * 1000) / 10
-    };
+  // Фильтруем только уволенных (есть dismissedAt)
+  var fired = employees.filter(function (e) {
+    return e.dismissedAt;
   });
 
-  rows.sort(function (a, b) {
-    return (b.probation + b.m6 + b.y1) - (a.probation + a.m6 + a.y1);
-  });
-  var top10 = rows.slice(0, 10);
+  if (!fired.length) return;
 
-  // FIX #12: ch-hrFired → ch-hrTurnover
+  // Группируем по периоду YYYY-MM
+  var byPeriod = {};
+  fired.forEach(function (e) {
+    var period = e.dismissedAt.slice(0, 7);
+    if (!byPeriod[period]) byPeriod[period] = 0;
+    byPeriod[period]++;
+  });
+
+  var total = employees.length || 1;
+  var periods = Object.keys(byPeriod).sort();
+
   var chart = _initChart('ch-hrTurnover');
   if (!chart) return;
 
   chart.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    legend: {
-      data: ['Неполная ставка', 'Внеурочная нагрузка', 'ЗП < 50 000 ₽'],
-      bottom: 0
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      formatter: function (params) {
+        return params[0].name + ': ' + params[0].value + '%';
+      }
     },
-    grid: { top: 20, right: 16, bottom: 48, left: 150 },
+    grid: { top: 20, right: 60, bottom: 48, left: 60 },
     xAxis: {
-      type: 'value',
-      axisLabel: { formatter: '{value}%' },
-      max: 100
+      type: 'category',
+      data: periods,
+      axisLabel: { rotate: 45, fontSize: 10 }
     },
     yAxis: {
-      type: 'category',
-      data: top10.map(function (r) { return r.name; }),
-      axisLabel: { fontSize: 10 },
-      inverse: true
+      type: 'value',
+      axisLabel: { formatter: '{value}%' }
     },
-    series: [
-      {
-        name: 'Неполная ставка',
-        type: 'bar',
-        stack: 'f',
-        data: top10.map(function (r) { return r.probation; }),
-        itemStyle: { color: '#fbbf24' }
-      },
-      {
-        name: 'Внеурочная нагрузка',
-        type: 'bar',
-        stack: 'f',
-        data: top10.map(function (r) { return r.m6; }),
-        itemStyle: { color: '#f59e0b' }
-      },
-      {
-        name: 'ЗП < 50 000 ₽',
-        type: 'bar',
-        stack: 'f',
-        data: top10.map(function (r) { return r.y1; }),
-        itemStyle: { color: '#ef4444' }
+    series: [{
+      name: '% уволившихся',
+      type: 'bar',
+      data: periods.map(function (p) {
+        return Math.round((byPeriod[p] / total) * 1000) / 10;
+      }),
+      itemStyle: { color: '#ef4444' },
+      label: {
+        show: true,
+        position: 'top',
+        formatter: '{c}%',
+        fontSize: 10
       }
-    ]
+    }]
   });
 }
 
