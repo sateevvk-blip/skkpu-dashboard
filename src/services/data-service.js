@@ -6,6 +6,11 @@
  *
  * FIXES (issue #11):
  *   — Добавлена загрузка data/organizations.json → AppState('organizations')
+ *
+ * FIXES (issue #30):
+ *   — Bug #2: trim() для districtId у каждого сотрудника перед записью в AppState
+ *   — Bug #3: teacherNames и teacherRoles генерируются динамически из employees,
+ *             т.к. новый teachers.json содержит только ключ `employees`
  */
 const DataService = (function () {
   'use strict';
@@ -32,9 +37,19 @@ const DataService = (function () {
     AppState.set('districts',     districts);
     // FIX #11: organizations доступны через AppState.get('organizations')
     AppState.set('organizations', orgsData.items || []);
-    AppState.set('teacherNames',  teachers.names);
-    AppState.set('teacherRoles',  teachers.roles);
-    AppState.set('employees',     teachers.employees || []);
+
+    // FIX #30 Bug #2: trim districtId, чтобы устранить ведущие пробелы и \n
+    const emps = (teachers.employees || []).map(e => ({
+      ...e,
+      districtId: typeof e.districtId === 'string' ? e.districtId.trim() : e.districtId
+    }));
+
+    AppState.set('employees', emps);
+
+    // FIX #30 Bug #3: teachers.names и teachers.roles отсутствуют в новом формате —
+    // генерируем уникальные значения динамически из массива employees
+    AppState.set('teacherNames', [...new Set(emps.map(e => e.name).filter(Boolean))]);
+    AppState.set('teacherRoles', [...new Set(emps.map(e => e.position).filter(Boolean))]);
   }
 
   return { loadAll };
