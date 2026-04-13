@@ -84,6 +84,68 @@ org.js: сотрудники из AppState('employees'), фильтр orgId + di
 
 `orgId` всегда нормализуется через `padStart(4, '0')` с обеих сторон сравнения.
 
+## KPI-виджеты страницы Городского округа
+
+На странице ГО отображаются **восемь** KPI-виджетов в двух рядах (`#go-kpis` и `#go-kpis2`).
+Они **не являются заглушками** — данные берутся из `data/districts.json` через `AppState('districts')`.
+
+### Источник данных
+
+При клике на округ вызывается `openDistrict(rawName)` → `renderDistrict(dname, displayName)` в `src/scripts/district.js`.
+Объект `d` — это запись из `districts.json` по ключу-названию округа. Поле `d.hrMetrics` содержит кадровые метрики.
+
+### Ряд  1: основные KPI (`#go-kpis`)
+
+| Виджет | Поле | Источник | Логика цвета |
+|---|---|---|---|
+| **Средняя ЗП педагога** | `d.zp` | `districts.json` | 🔴 `d.r === 'r'` / 🟡 `d.r === 'y'` / 🟢 иначе |
+| **Педагогов ниже цели** | `сумма org.below` | вычисляется из orgs[] | 🔴 `> 15` / 🟡 `> 0` / 🟢 `=== 0` |
+| **АХР / педагоги** | `d.ahr` (%) | `districts.json` | 🔴 `> 40%` / 🟡 `> 35%` / 🟢 иначе |
+| **Комплектация** | `d.cap` (%) | `districts.json` | 🔴 `< 70%` / 🟡 `< 80%` / 🟢 иначе |
+
+> Показатель «Педагогов ниже цели» — единственный **вычисляемый** KPI: `orgs.reduce((a, o) => a + (o.below || 0), 0)`. Остальные берутся прямо из `d.*`.
+
+### Ряд 2: инфраструктура и кадры (`#go-kpis2`)
+
+| Виджет | Поле | Источник | Логика цвета |
+|---|---|---|---|
+| **Зданий** | `d.buildings` | `districts.json` | `colorBuildingLoad(d.buildingLoad)` |
+| **Наполняемость** | `d.classCapacity['5'].avg` | `districts.json` | `colorClassCapacity(avg)` |
+| **Укомплектованность** | `d.hrMetrics.staffingRate` (%) | `districts.json` → `hrMetrics` | 🔴 `< 90%` / 🟡 `< 95%` / 🟢 `≥ 95%` |
+| **Текучесть кадров** | `d.hrMetrics.turnover` (%) | `districts.json` → `hrMetrics` | 🟢 `≤ 7%` / 🟡 `≤ 10%` / 🔴 `> 10%` |
+
+### Подписи виджетов
+
+| Виджет | Подпись |
+|---|---|
+| Зданий | `Загрузка: X%` — из `d.buildingLoad` |
+| Наполняемость | `Средняя по 5 классу` |
+| Укомплектованность | `В норме` если `≥ 95%`, иначе `Ниже норматива` |
+| Текучесть кадров | `В норме` / `Умеренная` / `Высокая` |
+
+### Поток данных KPI
+
+```
+data/districts.json
+        ↓  fetch() при старте (DataService.loadAll)
+  AppState.set('districts', districts)
+        ↓  при клике на округ
+  openDistrict(rawName)  →  renderDistrict(dname)
+        ↓
+  d = AppState.get('districts')[dname]
+  below = orgs.reduce(...)           ← суммируется из orgs[]
+        ↓
+  #go-kpis  ← innerHTML (4 div.kpi — зп, below, ahr, cap)
+  #go-kpis2 ← innerHTML (4 div.kpi — buildings, capacity, staffing, turnover)
+```
+
+### Связанные данные на странице округа
+
+Помимо KPI-виджетов, `renderDistrict` также строит:
+- **Таблицу организаций** `#tb-orgs` — объединенные данные из `organizations.json` и `d.orgs` (пользователь может перейти в организацию кликом).
+- **Блок рекомендаций** `#go-insights` — 3–4 текстовых блока в зависимости от `d.r` (`r`/`y`/`g`).
+- **График ECharts** `ch-goSalBar` — горизонтальная гистограмма ЗП индивидуальных организаций.
+
 ## KPI-виджеты страницы организации
 
 На странице организации отображаются четыре ключевых показателя (`#org-kpis`).
