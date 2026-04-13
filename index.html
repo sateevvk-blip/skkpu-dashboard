@@ -5,15 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>СККПУ · Дашборд · v2.0.2</title>
 
-<!-- Vendor styles -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
 <!-- Application styles -->
 <link rel="stylesheet" href="src/styles/main.css"/>
 <link rel="stylesheet" href="src/styles/mobile.css"/>
+<link rel="stylesheet" href="src/styles/district-tiles.css"/>
 
 <!-- Vendor scripts -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
@@ -77,34 +74,22 @@
     <div class="kpi blue"><div class="kl">Средняя ЗП педагога по МО</div><div class="kv" style="color:var(--primary)">74 850</div><div class="kd" style="color:var(--green)">▲ +3 200 ₽ к прошлому году</div></div>
   </div>
 
-  <!-- Карта -->
+  <!-- Плитки ОМСУ (feat #31: заменяет Leaflet-карту) -->
   <div class="tabpane active" id="moPane-map">
     <div class="card" style="padding:12px 14px">
       <div class="card-title" style="margin-bottom:6px">Карта МО по городским округам</div>
-      <div class="card-sub" style="margin-bottom:10px">Клик по сегменту открывает уровень городского округа</div>
+      <div class="card-sub" style="margin-bottom:10px">Клик по плитке открывает уровень городского округа</div>
       <div class="map-wrap">
-        <div id="map"></div>
-        <div class="map-filters">
-          <div class="mf-label">Фильтр</div>
-          <button class="mf-btn" onclick="filterMap('r',this)">🔴 Критичные</button>
-          <button class="mf-btn" onclick="filterMap('y',this)">🟡 Внимание</button>
-          <button class="mf-btn" onclick="filterMap('g',this)">🟢 Стабильные</button>
-          <button class="mf-btn" onclick="filterMap('',this)">↩ Все</button>
-        </div>
+        <!-- feat(#31): id="district-tiles" вместо id="map" -->
+        <div id="district-tiles" style="flex:1;min-height:360px"></div>
         <div class="map-metrics">
           <div class="mf-label">Метрика</div>
           <button class="mf-btn active" onclick="setMetric('zp',this)">Средняя ЗП</button>
-          <button class="mf-btn" onclick="setMetric('ahr',this)">АХР / пед.</button>
-          <button class="mf-btn" onclick="setMetric('cap',this)">Комплектация</button>
-          <button class="mf-btn" onclick="setMetric('ext',this)">Внеурочка</button>
-          <button class="mf-btn" onclick="setMetric('bload',this)">Загрузка зданий</button>
+          <button class="mf-btn" onclick="setMetric('staffingRate',this)">Комплектация</button>
+          <button class="mf-btn" onclick="setMetric('age',this)">Возраст</button>
+          <button class="mf-btn" onclick="setMetric('experience',this)">Стаж</button>
           <button class="mf-btn" onclick="setMetric('staffing',this)">Укомплект-ть</button>
           <button class="mf-btn" onclick="setMetric('turnover',this)">Текучесть</button>
-        </div>
-        <div class="map-legend">
-          <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
-          <div class="leg"><span class="sw" style="background:#f59e0b"></span>Внимание</div>
-          <div class="leg"><span class="sw" style="background:#10b981"></span>Норма</div>
         </div>
       </div>
     </div>
@@ -346,7 +331,6 @@
     <div class="org-id-badge" id="org-id-badge" style="font-size:0.75rem;color:var(--color-text-muted,#888);margin-top:4px;font-family:monospace"></div>
     <div class="org-status" id="org-status">—</div>
   </div>
-  <!-- FIX issue #6 баг 2: блок KPI для уровня Орг -->
   <div class="g4" id="org-kpis"></div>
   <div class="prow" id="org-problems"></div>
   <div id="org-insights"></div>
@@ -378,28 +362,22 @@
     <div class="card-title">Сотрудники организации</div>
     <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
     <div class="tbl-wrap">
-      <!-- fix(#13): id="tb-teachers" на <table> — org.js делает getElementById('tb-teachers')
-           затем querySelector('tbody'). class="tbl-teachers" используется в CSS для
-           table-layout: fixed (свойство работает только на <table>, не на <tbody>).
-           <colgroup> фиксирует ширины колонок — работает в паре с table-layout: fixed.
-           Без явных ширин браузер независимо пересчитывает <thead> и <tbody>,
-           что даёт визуальное смещение шапки. -->
       <table id="tb-teachers" class="tbl tbl-teachers">
         <colgroup>
-          <col style="width:70px">  <!-- ID -->
-          <col style="width:200px"> <!-- ФИО -->
-          <col style="width:100px"> <!-- Вид обр. -->
-          <col style="width:130px"> <!-- Категория -->
-          <col style="width:160px"> <!-- Должность -->
-          <col style="width:80px">  <!-- Тип -->
-          <col style="width:90px">  <!-- Нагрузка -->
-          <col style="width:80px">  <!-- Ставка -->
-          <col style="width:110px"> <!-- Предмет -->
-          <col style="width:70px">  <!-- Класс -->
-          <col style="width:70px">  <!-- Напол. -->
-          <col style="width:80px">  <!-- Часы/нед -->
-          <col style="width:90px">  <!-- ЗП -->
-          <col style="width:60px">  <!-- Статус -->
+          <col style="width:70px">
+          <col style="width:200px">
+          <col style="width:100px">
+          <col style="width:130px">
+          <col style="width:160px">
+          <col style="width:80px">
+          <col style="width:90px">
+          <col style="width:80px">
+          <col style="width:110px">
+          <col style="width:70px">
+          <col style="width:70px">
+          <col style="width:80px">
+          <col style="width:90px">
+          <col style="width:60px">
         </colgroup>
         <thead>
           <tr>
@@ -430,23 +408,24 @@
 </div><!-- /shell -->
 
 <!-- Application scripts — порядок важен -->
-<!-- 1. Стор данных: должен быть первым, до всех остальных модулей -->
+<!-- 1. Стор данных -->
 <script src="src/store/state.js"></script>
-<!-- 2. Утилиты: форматирование и нормализация -->
+<!-- 2. Утилиты -->
 <script src="src/utils/format.js"></script>
 <script src="src/utils/normalize.js"></script>
-<!-- 3. Сервисы: DataService использует AppState -->
+<!-- 3. Сервисы -->
 <script src="src/services/data-service.js"></script>
-<!-- 4. UI-модули: используют AppState и DataService -->
+<!-- 4. UI-модули -->
 <script src="src/scripts/toast.js"></script>
 <script src="src/scripts/navigation.js"></script>
-<script src="src/scripts/map.js"></script>
+<!-- feat(#31): district-tiles.js вместо map.js -->
+<script src="src/scripts/district-tiles.js"></script>
 <script src="src/scripts/district.js"></script>
 <script src="src/scripts/org.js"></script>
 <script src="src/scripts/charts-mo.js"></script>
 <script src="src/scripts/charts-hr.js"></script>
 <script src="src/scripts/charts-buildings.js"></script>
-<!-- 5. Точка входа: запускается последней -->
+<!-- 5. Точка входа -->
 <script src="src/scripts/app.js"></script>
 
 <!-- Mobile bottom nav -->
