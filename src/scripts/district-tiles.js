@@ -6,9 +6,16 @@
  * Форма каждой плитки совпадает с границами округа;
  * все округа вместе образуют контур Московской области.
  *
+ * fix(#33): refreshDistrictTiles теперь вызывает полный renderSvgMap
+ *           (а не только repaintPaths), чтобы гарантировать обновление
+ *           цвета, aria-label и title-элементов при смене метрики.
+ *           Добавлена функция setMetric() — глобальный обработчик кнопок
+ *           .mf-btn в index.html.
+ *
  * Публичное API:
  *   initDistrictTiles(containerId)  — загрузить geo.json и отрисовать карту
- *   refreshDistrictTiles()          — перекрасить пути при смене метрики
+ *   refreshDistrictTiles()          — перерисовать карту при смене метрики
+ *   setMetric(metricKey, btnEl)     — переключить метрику и перерисовать
  */
 
 (function () {
@@ -123,26 +130,21 @@
     var innerW = W - p * 2;
     var innerH = H - p * 2;
 
-    // Масштаб с учётом aspect-ratio SVG и aspect-ratio географических данных
     var lonSpan = bbox.maxLon - bbox.minLon;
     var latSpan = bbox.maxLat - bbox.minLat;
-    // Широта центра для Mercator-коррекции
     var latMid = (bbox.minLat + bbox.maxLat) / 2;
     var cosLat  = Math.cos(latMid * Math.PI / 180);
-    // Эффективное соотношение сторон гео-области
     var geoAspect = (lonSpan * cosLat) / latSpan;
     var svgAspect = innerW / innerH;
 
     var scaleX, scaleY, offsetX, offsetY;
     if (geoAspect > svgAspect) {
-      // ограничение по ширине
       scaleX = innerW / lonSpan;
       scaleY = scaleX / cosLat;
       var usedH = latSpan * scaleY;
       offsetX = p;
       offsetY = p + (innerH - usedH) / 2;
     } else {
-      // ограничение по высоте
       scaleY = innerH / latSpan;
       scaleX = scaleY * cosLat;
       var usedW = lonSpan * scaleX;
@@ -152,7 +154,6 @@
 
     return function (lon, lat) {
       var x = offsetX + (lon - bbox.minLon) * scaleX;
-      // Y инвертирован: большая широта → меньший y
       var y = offsetY + (bbox.maxLat - lat) * scaleY;
       return [x, y];
     };
@@ -191,36 +192,10 @@
     return p.district || p.name_clean || p.name || '';
   }
 
-  // ─── Найти центроид кольца (для подписей) ────────────────────────────────────
-  function ringCentroid(ring, proj) {
-    var sx = 0, sy = 0, n = ring.length;
-    ring.forEach(function (pt) {
-      var xy = proj(pt[0], pt[1]);
-      sx += xy[0]; sy += xy[1];
-    });
-    return [sx / n, sy / n];
-  }
-
-  function featureCentroid(feature, proj) {
-    var geom = feature.geometry;
-    if (!geom) return [0, 0];
-    var ring;
-    if (geom.type === 'Polygon') {
-      ring = geom.coordinates[0];
-    } else {
-      // берём первое кольцо самого большого полигона
-      var biggest = geom.coordinates.reduce(function (a, b) {
-        return b[0].length > a[0].length ? b : a;
-      });
-      ring = biggest[0];
-    }
-    return ringCentroid(ring, proj);
-  }
-
   // ─── Тултип ───────────────────────────────────────────────────────────────────
   var _tooltip = null;
 
-  function ensureTooltip(svgEl) {
+  function ensureTooltip() {
     if (_tooltip) return _tooltip;
     _tooltip = document.createElement('div');
     _tooltip.className = 'dt-tooltip';
@@ -265,7 +240,7 @@
     if (_tooltip) _tooltip.style.display = 'none';
   }
 
-  // ─── SVG-размеры: подстраиваемся под контейнер ───────────────────────────────
+  // ─── SVG-размеры ─────────────────────────────────────────────────────────────
   var SVG_W = 900;
   var SVG_H = 660;
 
@@ -282,32 +257,6 @@
     }).join('');
   }
 
-  // ─── Перекрасить пути при смене метрики (без повторного fetch) ───────────────
-  function repaintPaths(container) {
-    var metric    = AppState.get('mapMetric') || 'zp';
-    var cfg       = METRIC_CONFIG[metric] || METRIC_CONFIG.zp;
-    var districts = AppState.get('districts') || {};
-    var selected  = AppState.get('selectedDistrict') || null;
-
-    var paths = container.querySelectorAll('.dt-map-path');
-    paths.forEach(function (path) {
-      var name = path.dataset.district;
-      var distData = districts[name] || {};
-      var val  = distData[metric];
-      var color = getTileColor(val, metric);
-      var isSelected = selected === name;
-      path.setAttribute('fill', color);
-      path.setAttribute('stroke', isSelected ? '#fff' : 'rgba(255,255,255,0.6)');
-      path.setAttribute('stroke-width', isSelected ? '2' : '0.7');
-      // обновляем title-элемент (нативный тултип как запасной)
-      var titleEl = path.querySelector('title');
-      if (titleEl) {
-        var formatted = cfg.format(val);
-        titleEl.textContent = name + ': ' + formatted;
-      }
-    });
-  }
-
   // ─── Основной рендер SVG-карты ───────────────────────────────────────────────
   function renderSvgMap(container, geoJson) {
     var metric    = AppState.get('mapMetric') || 'zp';
@@ -319,7 +268,6 @@
     var bbox      = calcBBox(features);
     var proj      = makeProjector(bbox, SVG_W, SVG_H, 20);
 
-    // Строим SVG
     var svgParts = [
       '<svg class="dt-svg" viewBox="0 0 ' + SVG_W + ' ' + SVG_H + '"',
       ' xmlns="http://www.w3.org/2000/svg"',
@@ -363,12 +311,10 @@
     if (!svgWrap) return;
     svgWrap.innerHTML = svgParts.join('');
 
-    // ── Навешиваем события ──────────────────────────────────────────────────────
-    var svgEl   = svgWrap.querySelector('.dt-svg');
-    ensureTooltip(svgEl);
+    var svgEl = svgWrap.querySelector('.dt-svg');
+    ensureTooltip();
 
     svgWrap.querySelectorAll('.dt-map-path').forEach(function (path) {
-      // Hover: тултип
       path.addEventListener('mouseenter', function (e) {
         var distName = path.dataset.district;
         var dData    = (AppState.get('districts') || {})[distName] || {};
@@ -392,10 +338,8 @@
         path.setAttribute('stroke-width', sel === distName ? '2' : '0.7');
       });
 
-      // Клик: выделение + drill-down
       function handleSelect() {
         var distName = path.dataset.district;
-        // снимаем выделение со всех
         svgWrap.querySelectorAll('.dt-map-path').forEach(function (p) {
           p.setAttribute('stroke', 'rgba(255,255,255,0.6)');
           p.setAttribute('stroke-width', '0.7');
@@ -420,7 +364,6 @@
       return;
     }
 
-    // Каркас: SVG-область + легенда
     container.innerHTML =
       '<div class="dt-wrap">' +
         '<div class="dt-svg-wrap"><div class="dt-loading">Загрузка карты…</div></div>' +
@@ -430,7 +373,6 @@
     var metric = AppState.get('mapMetric') || 'zp';
     renderLegend(container, metric);
 
-    // Загружаем geo.json один раз и сохраняем в AppState
     fetch('./data/geo.json')
       .then(function (r) {
         if (!r.ok) throw new Error('geo.json: HTTP ' + r.status);
@@ -440,6 +382,9 @@
         AppState.set('geoJson', geoJson);
         var svgWrap = container.querySelector('.dt-svg-wrap');
         if (svgWrap) svgWrap.innerHTML = '';
+        // fix(#33): гарантируем, что districts уже заполнен (DataService.loadAll
+        // завершается до вызова initDistrictTiles в app.js), поэтому
+        // renderSvgMap корректно раскрасит все пути с первого рендера.
         renderSvgMap(container, geoJson);
       })
       .catch(function (err) {
@@ -452,20 +397,30 @@
   };
 
   // ─── Публичное обновление при смене метрики ───────────────────────────────────
+  // fix(#33): вызываем полный renderSvgMap (а не только repaintPaths),
+  // чтобы aria-label, title и fill были гарантированно актуальны.
   window.refreshDistrictTiles = function () {
     var container = document.getElementById('district-tiles');
     if (!container) return;
     var metric = AppState.get('mapMetric') || 'zp';
     renderLegend(container, metric);
-    // Если SVG уже построен — только перекрашиваем пути
     var geoJson = AppState.get('geoJson');
     if (geoJson) {
-      repaintPaths(container);
+      renderSvgMap(container, geoJson);
     }
   };
 
-  // ─── Интеграция с setMetric / filterMap (map.js API) ─────────────────────────
-  // setMetric вызывает window._mapRender — переопределяем на refreshDistrictTiles
+  // ─── setMetric — глобальный обработчик кнопок .mf-btn ────────────────────────
+  // fix(#33): функция отсутствовала — кнопки onclick="setMetric(...)" не работали.
+  window.setMetric = function (metricKey, btn) {
+    AppState.set('mapMetric', metricKey);
+    var btns = document.querySelectorAll('.map-metrics .mf-btn');
+    btns.forEach(function (b) { b.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    window.refreshDistrictTiles();
+  };
+
+  // ─── Совместимость: _mapRender → refreshDistrictTiles ────────────────────────
   window._mapRender = window.refreshDistrictTiles;
 
 }());
