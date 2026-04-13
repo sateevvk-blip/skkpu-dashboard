@@ -166,34 +166,38 @@ body {
 .card-title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
 .card-sub { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
 
-/* ── Map ── */
+/* ── Map / District-tiles ── */
 /*
- * fix(#33): .map-wrap переведён в flex-лэйаут:
- *   карта (#district-tiles) остаётся слева (занимает всё доступное пространство),
- *   панель метрик — справа (flex-shrink: 0).
- *   Используем min-height вместо фиксированной высоты, чтобы SVG
- *   растягивался под соотношение сторон контейнера.
+ * fix(#34): лейаут map-wrap переведён в flex-row:
+ *   .map-metrics (кнопки метрик) — слева, фиксированная ширина 140px;
+ *   #district-tiles (SVG-плитки) — справа, занимает всё доступное пространство.
+ *   position:absolute убран — оба блока в normal flow.
+ *   Адаптив ≤900px: переключение на flex-column.
  */
 .map-wrap {
   display: flex;
+  flex-direction: row;
   gap: 14px;
-  align-items: flex-start;
-  min-height: 420px;
+  align-items: stretch;
+  min-height: 480px;
 }
-/* Карта занимает всю доступную ширину */
-#district-tiles {
-  flex: 1;
-  min-height: 360px;
-  min-width: 0;
-}
-/* Панель метрик — в normal flow, не position:absolute */
+
+/* Панель метрик — слева, фиксированная ширина */
 .map-metrics {
-  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 5px;
+  flex-shrink: 0;
+  width: 140px;
   padding-top: 4px;
 }
+
+/* Плитки ОМСУ — занимают всё оставшееся пространство */
+#district-tiles {
+  flex: 1;
+  min-height: 0;
+}
+
 .map-filters {
   flex-shrink: 0;
   display: flex;
@@ -221,6 +225,18 @@ body {
 }
 .leg { display: flex; align-items: center; gap: 5px; color: #374151; }
 .sw  { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* Адаптив: ≤900px — вертикальный стек */
+@media (max-width: 900px) {
+  .map-wrap {
+    flex-direction: column;
+  }
+  .map-metrics {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: auto;
+  }
+}
 
 /* ── Table ── */
 .tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
