@@ -1,112 +1,84 @@
 /*
- * district-tiles.css — стили компонента интерактивных плиток ОМСУ.
- * feat(#31): замена Leaflet-карты.
- *
- * Переменная --tile-color проставляется инлайн из JS
- * на основе значения метрики по округу.
+ * district-tiles.css — стили SVG-карты ОМСУ.
+ * fix(#31): замена CSS-сетки прямоугольников на интерактивную SVG-хороплет
+ * сформированную по полигонам из data/geo.json.
  */
 
-/* ── Обёртка ──────────────────────────────────────────────────────────────── */
+/* ── Обёртка компонента ───────────────────────────────────────────── */
 .dt-wrap {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
 }
 
-/* ── Сетка плиток ─────────────────────────────────────────────────────────── */
-.dt-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 6px;
-  overflow-y: auto;
+/* ── Обёртка SVG: занимает всё доступное пространство ─────────────── */
+.dt-svg-wrap {
   flex: 1;
-}
-
-/* ── Одна плитка ──────────────────────────────────────────────────────────── */
-.dt-tile {
-  position: relative;
+  min-height: 360px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 8px 10px 6px;
-  min-height: 72px;
+  align-items: stretch;
+  overflow: hidden;
   border-radius: 6px;
-  border: none;
+  background: var(--color-bg, #f7f6f2);
+}
+
+/* ── SVG-элемент ──────────────────────────────────────────────── */
+.dt-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* SVG сам задаёт пропорции через viewBox */
+}
+
+/* ── Отдельный округ ───────────────────────────────────────────── */
+.dt-map-path {
   cursor: pointer;
-  overflow: hidden;
-  background-color: var(--tile-color, #6b7280);
-  color: #fff;
-  transition:
-    transform 120ms ease,
-    box-shadow 120ms ease,
-    opacity 120ms ease;
-  text-align: left;
-  font-family: inherit;
+  transition: opacity 140ms ease;
+  outline: none;
 }
 
-/* Полупрозрачный оверлей для читаемости текста */
-.dt-tile::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent 30%,
-    rgba(0, 0, 0, 0.28) 100%
-  );
-  pointer-events: none;
+.dt-map-path:hover {
+  opacity: 0.85;
 }
 
-.dt-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  opacity: 0.95;
+.dt-map-path:focus-visible {
+  outline: 2px solid var(--color-primary, #01696f);
+  outline-offset: 2px;
 }
 
-.dt-tile:active {
-  transform: translateY(0);
-  box-shadow: none;
+.dt-map-path:active {
+  opacity: 0.7;
 }
 
-/* ── Выделение выбранной плитки ───────────────────────────────────────────── */
-.dt-tile--selected {
-  outline: 3px solid #fff;
-  outline-offset: -3px;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35);
-}
-
-/* ── Текст внутри плитки ──────────────────────────────────────────────────── */
-.dt-tile__name {
-  position: relative;
-  z-index: 1;
-  font-size: 11px;
-  font-weight: 600;
-  line-height: 1.25;
-  letter-spacing: 0.01em;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  max-width: 100%;
-}
-
-.dt-tile__value {
-  position: relative;
-  z-index: 1;
+/* ── Состояние загрузки ────────────────────────────────────────── */
+.dt-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
   font-size: 13px;
-  font-weight: 700;
-  margin-top: 2px;
-  white-space: nowrap;
+  color: var(--color-text-muted, #888);
 }
 
-/* ── Легенда ──────────────────────────────────────────────────────────────── */
+.dt-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 32px;
+  font-size: 13px;
+  color: var(--color-error, #ef4444);
+}
+
+/* ── Легенда ──────────────────────────────────────────────────── */
 .dt-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 12px;
-  padding: 6px 0 2px;
+  padding: 4px 0 2px;
 }
 
 .dt-legend-item {
@@ -124,39 +96,27 @@
   flex-shrink: 0;
 }
 
-/* ── Пустое состояние ─────────────────────────────────────────────────────── */
-.dt-empty {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: var(--color-text-muted, #888);
-  padding: 32px 0;
-  font-size: 13px;
+.dt-legend-label {
+  white-space: nowrap;
 }
 
-/* ── Адаптив: планшет / мобилка ───────────────────────────────────────────── */
+/* ── Адаптив: планшет / мобилка ──────────────────────────── */
 @media (max-width: 768px) {
-  .dt-grid {
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-    gap: 5px;
+  .dt-svg-wrap {
+    min-height: 280px;
   }
-
-  .dt-tile {
-    min-height: 60px;
-    padding: 6px 8px 5px;
-  }
-
-  .dt-tile__name  { font-size: 10px; }
-  .dt-tile__value { font-size: 12px; }
 }
 
 @media (max-width: 480px) {
-  .dt-grid {
-    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-    gap: 4px;
+  .dt-svg-wrap {
+    min-height: 220px;
   }
 
-  .dt-tile {
-    min-height: 52px;
-    padding: 5px 6px 4px;
+  .dt-legend {
+    gap: 4px 8px;
+  }
+
+  .dt-legend-item {
+    font-size: 10px;
   }
 }
