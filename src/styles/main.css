@@ -6,6 +6,8 @@
 :root {
   --primary: #2563eb;
   --primary-dk: #1d4ed8;
+  --teal: #01696f;
+  --teal-dk: #0c4e54;
   --red: #ef4444;
   --yellow: #f59e0b;
   --green: #10b981;
@@ -166,40 +168,178 @@ body {
 .card-title { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
 .card-sub { font-size: 11px; color: var(--muted); margin-bottom: 12px; }
 
-/* ── Map ── */
-#map { height: 500px; border-radius: 10px; overflow: hidden; position: relative; }
-.map-wrap { position: relative; }
-.map-filters {
-  position: absolute; top: 10px; left: 10px; z-index: 500;
-  display: flex; flex-direction: column; gap: 6px;
+/* ═══════════════════════════════════════════
+   MAP — redesign (#37)
+   Лейаут: панель управления слева, карта справа
+   ═══════════════════════════════════════════ */
+
+.map-wrap {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  align-items: stretch;
+  min-height: 480px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
 }
-.map-metrics {
-  position: absolute; top: 10px; right: 10px; z-index: 500;
-  display: flex; flex-direction: column; gap: 5px;
+
+/* ── Левая панель управления ── */
+.map-panel {
+  width: 200px;
+  flex-shrink: 0;
+  background: #1a2332;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 12px;
+  gap: 0;
+  z-index: 10;
 }
+
+.map-panel-title {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* Группа кнопок (метрики / фильтры) */
+.map-panel-group {
+  margin-bottom: 12px;
+}
+
+.map-panel-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+/* Кнопки метрик */
 .mf-btn {
-  padding: 6px 11px; border-radius: 9px;
-  border: 1px solid rgba(255, 255, 255, .7);
-  background: rgba(255, 255, 255, .92); backdrop-filter: blur(6px);
-  cursor: pointer; font-size: 11.5px; font-weight: 600;
-  white-space: nowrap; box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.75);
+  cursor: pointer;
+  font-size: 11.5px;
+  font-weight: 500;
+  white-space: nowrap;
   transition: all .15s;
+  margin-bottom: 3px;
+  text-align: left;
 }
-.mf-btn:hover { background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, .15); }
-.mf-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-.mf-label {
-  font-size: 10px; text-transform: uppercase; letter-spacing: .08em;
-  color: rgba(100, 116, 139, .8); padding: 4px 4px 2px; font-weight: 700;
+.mf-btn:hover {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  border-color: rgba(255,255,255,.2);
 }
+.mf-btn.active {
+  background: var(--teal);
+  color: #fff;
+  border-color: var(--teal-dk);
+  font-weight: 700;
+}
+.mf-btn .mf-ico {
+  font-size: 13px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Кнопки-фильтры зон — с цветной точкой */
+.mf-zone {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.75);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all .15s;
+  margin-bottom: 3px;
+  text-align: left;
+}
+.mf-zone:hover {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+}
+.mf-zone.active {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border-color: rgba(255,255,255,.25);
+  font-weight: 700;
+}
+.mf-zone .zone-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Легенда внизу панели */
+.map-panel-legend {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.map-panel-legend-title {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 4px;
+}
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255,255,255,.65);
+  font-size: 11px;
+}
+.sw {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* ── Карта справа ── */
+#map {
+  flex: 1;
+  min-width: 0;
+  min-height: 480px;
+  border-radius: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Убираем старые оверлей-блоки (на случай если остались) */
+.map-filters,
+.map-metrics,
 .map-legend {
-  position: absolute; bottom: 10px; left: 10px; z-index: 500;
-  background: rgba(255, 255, 255, .92); backdrop-filter: blur(6px);
-  border-radius: 10px; padding: 8px 12px;
-  display: flex; gap: 12px; font-size: 11px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, .1);
+  display: none !important;
 }
-.leg { display: flex; align-items: center; gap: 5px; color: #374151; }
-.sw  { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
 /* ── Table ── */
 .tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
@@ -279,11 +419,7 @@ body {
 .tbl-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-wrap .tbl { min-width: 800px; }
 
-/* fix(#13): таблица сотрудников — фиксированный layout для точного
-   выравнивания шапки по данным независимо от длины содержимого ячеек.
-   Селектор .tbl-teachers таргетирует <table>, потому что table-layout: fixed
-   работает только на элементе <table> — на <tbody> браузер его игнорирует.
-   min-width: 1400px = 14 колонок × ~100px. */
+/* fix(#13): таблица сотрудников — фиксированный layout */
 .tbl-teachers {
   table-layout: fixed;
   min-width: 1400px;
