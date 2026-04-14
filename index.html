@@ -77,38 +77,78 @@
     <div class="kpi blue"><div class="kl">Средняя ЗП педагога по МО</div><div class="kv" style="color:var(--primary)">74 850</div><div class="kd" style="color:var(--green)">▲ +3 200 ₽ к прошлому году</div></div>
   </div>
 
-  <!-- Карта -->
+  <!-- ══ Карта ══ -->
   <div class="tabpane active" id="moPane-map">
     <div class="card" style="padding:12px 14px">
-      <div class="card-title" style="margin-bottom:6px">Карта МО по городским округам</div>
+      <div class="card-title" style="margin-bottom:2px">Карта МО по городским округам</div>
       <div class="card-sub" style="margin-bottom:10px">Клик по сегменту открывает уровень городского округа</div>
+
+      <!-- НОВЫЙ ЛЕЙАУТ: панель слева + карта справа -->
       <div class="map-wrap">
+
+        <!-- ── Левая панель управления ── -->
+        <div class="map-panel">
+
+          <div class="map-panel-title">Управление картой</div>
+
+          <!-- Метрика -->
+          <div class="map-panel-group">
+            <div class="map-panel-label">Метрика</div>
+            <button class="mf-btn active" onclick="setMetric('zp',this)">
+              <span class="mf-ico">💰</span>Средняя ЗП
+            </button>
+            <button class="mf-btn" onclick="setMetric('ahr',this)">
+              <span class="mf-ico">📋</span>АХР / пед.
+            </button>
+            <button class="mf-btn" onclick="setMetric('cap',this)">
+              <span class="mf-ico">🏫</span>Комплектация
+            </button>
+            <button class="mf-btn" onclick="setMetric('ext',this)">
+              <span class="mf-ico">📚</span>Внеурочка
+            </button>
+            <button class="mf-btn" onclick="setMetric('bload',this)">
+              <span class="mf-ico">📐</span>Загрузка зданий
+            </button>
+            <button class="mf-btn" onclick="setMetric('staffing',this)">
+              <span class="mf-ico">👤</span>Укомплект-ть
+            </button>
+            <button class="mf-btn" onclick="setMetric('turnover',this)">
+              <span class="mf-ico">🔄</span>Текучесть
+            </button>
+          </div>
+
+          <!-- Фильтр зон -->
+          <div class="map-panel-group">
+            <div class="map-panel-label">Фильтр зон</div>
+            <button class="mf-zone" onclick="filterMap('r',this)">
+              <span class="zone-dot" style="background:#ef4444"></span>Критичные
+            </button>
+            <button class="mf-zone" onclick="filterMap('y',this)">
+              <span class="zone-dot" style="background:#f59e0b"></span>Внимание
+            </button>
+            <button class="mf-zone" onclick="filterMap('g',this)">
+              <span class="zone-dot" style="background:#10b981"></span>Стабильные
+            </button>
+            <button class="mf-zone active" onclick="filterMap('',this)">
+              <span class="zone-dot" style="background:rgba(255,255,255,.4)"></span>Все округа
+            </button>
+          </div>
+
+          <!-- Легенда -->
+          <div class="map-panel-legend">
+            <div class="map-panel-legend-title">Легенда</div>
+            <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
+            <div class="leg"><span class="sw" style="background:#f59e0b"></span>Внимание</div>
+            <div class="leg"><span class="sw" style="background:#10b981"></span>Норма</div>
+          </div>
+        </div><!-- /map-panel -->
+
+        <!-- ── Leaflet-карта ── -->
         <div id="map"></div>
-        <div class="map-filters">
-          <div class="mf-label">Фильтр</div>
-          <button class="mf-btn" onclick="filterMap('r',this)">🔴 Критичные</button>
-          <button class="mf-btn" onclick="filterMap('y',this)">🟡 Внимание</button>
-          <button class="mf-btn" onclick="filterMap('g',this)">🟢 Стабильные</button>
-          <button class="mf-btn" onclick="filterMap('',this)">↩ Все</button>
-        </div>
-        <div class="map-metrics">
-          <div class="mf-label">Метрика</div>
-          <button class="mf-btn active" onclick="setMetric('zp',this)">Средняя ЗП</button>
-          <button class="mf-btn" onclick="setMetric('ahr',this)">АХР / пед.</button>
-          <button class="mf-btn" onclick="setMetric('cap',this)">Комплектация</button>
-          <button class="mf-btn" onclick="setMetric('ext',this)">Внеурочка</button>
-          <button class="mf-btn" onclick="setMetric('bload',this)">Загрузка зданий</button>
-          <button class="mf-btn" onclick="setMetric('staffing',this)">Укомплект-ть</button>
-          <button class="mf-btn" onclick="setMetric('turnover',this)">Текучесть</button>
-        </div>
-        <div class="map-legend">
-          <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
-          <div class="leg"><span class="sw" style="background:#f59e0b"></span>Внимание</div>
-          <div class="leg"><span class="sw" style="background:#10b981"></span>Норма</div>
-        </div>
-      </div>
+
+      </div><!-- /map-wrap -->
     </div>
-  </div>
+  </div><!-- /moPane-map -->
 
   <!-- Анализ ЗП -->
   <div class="tabpane" id="moPane-sal">
