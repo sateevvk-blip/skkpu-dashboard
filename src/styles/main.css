@@ -132,17 +132,58 @@ body {
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .g3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
 .mt14 { margin-top: 14px; }
+
+/* ── KPI Cards — glassmorphism (#38) ── */
 .kpi {
-  background: #fff; border: 1px solid var(--border);
-  border-left: 4px solid; border-radius: 14px; padding: 14px 16px;
+  border-left: 4px solid transparent;
+  border-radius: 12px;
+  padding: 14px 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .kpi .kl { font-size: 11px; color: var(--muted); line-height: 1.35; margin-bottom: 6px; }
 .kpi .kv { font-size: 28px; font-weight: 900; line-height: 1; }
 .kpi .kd { font-size: 11px; margin-top: 5px; }
-.kpi.red    { border-left-color: var(--red); }
-.kpi.yellow { border-left-color: var(--yellow); }
-.kpi.green  { border-left-color: var(--green); }
-.kpi.blue   { border-left-color: var(--primary); }
+
+/* Красная зона */
+.kpi.red {
+  background: linear-gradient(135deg, rgba(239,68,68,0.10), rgba(239,68,68,0.03));
+  border-left-color: #ef4444;
+  border-top: 1px solid rgba(239,68,68,0.18);
+  border-right: 1px solid rgba(239,68,68,0.18);
+  border-bottom: 1px solid rgba(239,68,68,0.18);
+  box-shadow: 0 4px 24px rgba(239,68,68,0.08);
+}
+
+/* Жёлтая зона */
+.kpi.yellow {
+  background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.03));
+  border-left-color: #f59e0b;
+  border-top: 1px solid rgba(245,158,11,0.18);
+  border-right: 1px solid rgba(245,158,11,0.18);
+  border-bottom: 1px solid rgba(245,158,11,0.18);
+  box-shadow: 0 4px 24px rgba(245,158,11,0.08);
+}
+
+/* Зелёная зона */
+.kpi.green {
+  background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(34,197,94,0.03));
+  border-left-color: #22c55e;
+  border-top: 1px solid rgba(34,197,94,0.18);
+  border-right: 1px solid rgba(34,197,94,0.18);
+  border-bottom: 1px solid rgba(34,197,94,0.18);
+  box-shadow: 0 4px 24px rgba(34,197,94,0.08);
+}
+
+/* Средняя ЗП (синяя) */
+.kpi.blue {
+  background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(59,130,246,0.03));
+  border-left-color: #3b82f6;
+  border-top: 1px solid rgba(59,130,246,0.18);
+  border-right: 1px solid rgba(59,130,246,0.18);
+  border-bottom: 1px solid rgba(59,130,246,0.18);
+  box-shadow: 0 4px 24px rgba(59,130,246,0.08);
+}
 
 /* ── Tabs ── */
 .tabs { display: flex; gap: 3px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
