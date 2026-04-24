@@ -12,6 +12,22 @@
 <link rel="stylesheet" href="src/styles/main.css"/>
 <link rel="stylesheet" href="src/styles/mobile.css"/>
 
+<style>
+/* ── AppIcon базовые стили ── */
+.app-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  color: currentColor;
+  stroke: currentColor;
+}
+.hdr-tab .app-icon,
+.mob-tab .app-icon {
+  display: block;
+  margin: 0 auto 2px;
+}
+</style>
+
 <!-- Vendor scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
@@ -47,12 +63,30 @@
   </div>
   <!-- Section tabs -->
   <div class="hdr-tabs" id="hdrTabs">
-    <div class="hdr-tab active" id="ht-map" onclick="moTab('map')">🗺 Карта округов</div>
-    <div class="hdr-tab" id="ht-sal" onclick="moTab('sal')">💰 Анализ ЗП</div>
-    <div class="hdr-tab" id="ht-sub" onclick="moTab('sub')">📊 Субвенция</div>
-    <div class="hdr-tab" id="ht-hr" onclick="moTab('hr')">👥 Кадры</div>
-    <div class="hdr-tab" id="ht-bld" onclick="moTab('bld')">🏫 Здания</div>
-    <div class="hdr-tab" id="ht-prb" onclick="moTab('prb')">⚠️ Проблемы</div>
+    <div class="hdr-tab active" id="ht-map" onclick="moTab('map')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-map"/></svg>
+      Карта округов
+    </div>
+    <div class="hdr-tab" id="ht-sal" onclick="moTab('sal')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-salary"/></svg>
+      Анализ ЗП
+    </div>
+    <div class="hdr-tab" id="ht-sub" onclick="moTab('sub')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-subvention"/></svg>
+      Субвенция
+    </div>
+    <div class="hdr-tab" id="ht-hr" onclick="moTab('hr')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-people"/></svg>
+      Кадры
+    </div>
+    <div class="hdr-tab" id="ht-bld" onclick="moTab('bld')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-building"/></svg>
+      Здания
+    </div>
+    <div class="hdr-tab" id="ht-prb" onclick="moTab('prb')">
+      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-warning"/></svg>
+      Проблемы
+    </div>
   </div>
 </header>
 
@@ -346,7 +380,6 @@
     <div class="org-id-badge" id="org-id-badge" style="font-size:0.75rem;color:var(--color-text-muted,#888);margin-top:4px;font-family:monospace"></div>
     <div class="org-status" id="org-status">—</div>
   </div>
-  <!-- FIX issue #6 баг 2: блок KPI для уровня Орг -->
   <div class="g4" id="org-kpis"></div>
   <div class="prow" id="org-problems"></div>
   <div id="org-insights"></div>
@@ -378,45 +411,28 @@
     <div class="card-title">Сотрудники организации</div>
     <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
     <div class="tbl-wrap">
-      <!-- fix(#13): id="tb-teachers" на <table> — org.js делает getElementById('tb-teachers')
-           затем querySelector('tbody'). class="tbl-teachers" используется в CSS для
-           table-layout: fixed (свойство работает только на <table>, не на <tbody>).
-           <colgroup> фиксирует ширины колонок — работает в паре с table-layout: fixed.
-           Без явных ширин браузер независимо пересчитывает <thead> и <tbody>,
-           что даёт визуальное смещение шапки. -->
       <table id="tb-teachers" class="tbl tbl-teachers">
         <colgroup>
-          <col style="width:70px">  <!-- ID -->
-          <col style="width:200px"> <!-- ФИО -->
-          <col style="width:100px"> <!-- Вид обр. -->
-          <col style="width:130px"> <!-- Категория -->
-          <col style="width:160px"> <!-- Должность -->
-          <col style="width:80px">  <!-- Тип -->
-          <col style="width:90px">  <!-- Нагрузка -->
-          <col style="width:80px">  <!-- Ставка -->
-          <col style="width:110px"> <!-- Предмет -->
-          <col style="width:70px">  <!-- Класс -->
-          <col style="width:70px">  <!-- Напол. -->
-          <col style="width:80px">  <!-- Часы/нед -->
-          <col style="width:90px">  <!-- ЗП -->
-          <col style="width:60px">  <!-- Статус -->
+          <col style="width:70px">
+          <col style="width:200px">
+          <col style="width:100px">
+          <col style="width:130px">
+          <col style="width:160px">
+          <col style="width:80px">
+          <col style="width:90px">
+          <col style="width:80px">
+          <col style="width:110px">
+          <col style="width:70px">
+          <col style="width:70px">
+          <col style="width:80px">
+          <col style="width:90px">
+          <col style="width:60px">
         </colgroup>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>ФИО</th>
-            <th>Вид обр.</th>
-            <th>Категория</th>
-            <th>Должность</th>
-            <th>Тип</th>
-            <th>Нагрузка</th>
-            <th>Ставка</th>
-            <th>Предмет</th>
-            <th>Класс</th>
-            <th>Напол.</th>
-            <th>Часы/нед</th>
-            <th>ЗП</th>
-            <th>Статус</th>
+            <th>ID</th><th>ФИО</th><th>Вид обр.</th><th>Категория</th><th>Должность</th>
+            <th>Тип</th><th>Нагрузка</th><th>Ставка</th><th>Предмет</th><th>Класс</th>
+            <th>Напол.</th><th>Часы/нед</th><th>ЗП</th><th>Статус</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -430,14 +446,10 @@
 </div><!-- /shell -->
 
 <!-- Application scripts — порядок важен -->
-<!-- 1. Стор данных: должен быть первым, до всех остальных модулей -->
 <script src="src/store/state.js"></script>
-<!-- 2. Утилиты: форматирование и нормализация -->
 <script src="src/utils/format.js"></script>
 <script src="src/utils/normalize.js"></script>
-<!-- 3. Сервисы: DataService использует AppState -->
 <script src="src/services/data-service.js"></script>
-<!-- 4. UI-модули: используют AppState и DataService -->
 <script src="src/scripts/toast.js"></script>
 <script src="src/scripts/navigation.js"></script>
 <script src="src/scripts/map.js"></script>
@@ -446,28 +458,41 @@
 <script src="src/scripts/charts-mo.js"></script>
 <script src="src/scripts/charts-hr.js"></script>
 <script src="src/scripts/charts-buildings.js"></script>
-<!-- 5. Точка входа: запускается последней -->
+<!-- icons.js — до app.js, экспортирует window.appIcon -->
+<script src="src/scripts/icons.js"></script>
 <script src="src/scripts/app.js"></script>
 
 <!-- Mobile bottom nav -->
 <div class="mob-nav" id="mobNav">
   <button class="mob-tab active" id="mnt-map" onclick="moTabMob('map')">
-    <span class="m-ico">🗺</span>Карта
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-map"/></svg>
+    </span>Карта
   </button>
   <button class="mob-tab" id="mnt-sal" onclick="moTabMob('sal')">
-    <span class="m-ico">💰</span>ЗП
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-salary"/></svg>
+    </span>ЗП
   </button>
   <button class="mob-tab" id="mnt-sub" onclick="moTabMob('sub')">
-    <span class="m-ico">📊</span>Субвенция
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-subvention"/></svg>
+    </span>Субвенция
   </button>
   <button class="mob-tab" id="mnt-hr" onclick="moTabMob('hr')">
-    <span class="m-ico">👥</span>Кадры
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-people"/></svg>
+    </span>Кадры
   </button>
   <button class="mob-tab" id="mnt-bld" onclick="moTabMob('bld')">
-    <span class="m-ico">🏫</span>Здания
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-building"/></svg>
+    </span>Здания
   </button>
   <button class="mob-tab" id="mnt-prb" onclick="moTabMob('prb')">
-    <span class="m-ico">⚠️</span>Проблемы
+    <span class="m-ico">
+      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-warning"/></svg>
+    </span>Проблемы
   </button>
 </div>
 
