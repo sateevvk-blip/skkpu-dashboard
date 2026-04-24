@@ -135,7 +135,7 @@ body {
 
 /* ── KPI Cards — glassmorphism (#38) ── */
 .kpi {
-  border-left: 4px solid transparent;
+  border: none;
   border-radius: 12px;
   padding: 14px 16px;
   backdrop-filter: blur(12px);
@@ -145,43 +145,20 @@ body {
 .kpi .kv { font-size: 28px; font-weight: 900; line-height: 1; }
 .kpi .kd { font-size: 11px; margin-top: 5px; }
 
-/* Красная зона */
 .kpi.red {
   background: linear-gradient(135deg, rgba(239,68,68,0.10), rgba(239,68,68,0.03));
-  border-left-color: #ef4444;
-  border-top: 1px solid rgba(239,68,68,0.18);
-  border-right: 1px solid rgba(239,68,68,0.18);
-  border-bottom: 1px solid rgba(239,68,68,0.18);
   box-shadow: 0 4px 24px rgba(239,68,68,0.08);
 }
-
-/* Жёлтая зона */
 .kpi.yellow {
   background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.03));
-  border-left-color: #f59e0b;
-  border-top: 1px solid rgba(245,158,11,0.18);
-  border-right: 1px solid rgba(245,158,11,0.18);
-  border-bottom: 1px solid rgba(245,158,11,0.18);
   box-shadow: 0 4px 24px rgba(245,158,11,0.08);
 }
-
-/* Зелёная зона */
 .kpi.green {
   background: linear-gradient(135deg, rgba(34,197,94,0.10), rgba(34,197,94,0.03));
-  border-left-color: #22c55e;
-  border-top: 1px solid rgba(34,197,94,0.18);
-  border-right: 1px solid rgba(34,197,94,0.18);
-  border-bottom: 1px solid rgba(34,197,94,0.18);
   box-shadow: 0 4px 24px rgba(34,197,94,0.08);
 }
-
-/* Средняя ЗП (синяя) */
 .kpi.blue {
   background: linear-gradient(135deg, rgba(59,130,246,0.10), rgba(59,130,246,0.03));
-  border-left-color: #3b82f6;
-  border-top: 1px solid rgba(59,130,246,0.18);
-  border-right: 1px solid rgba(59,130,246,0.18);
-  border-bottom: 1px solid rgba(59,130,246,0.18);
   box-shadow: 0 4px 24px rgba(59,130,246,0.08);
 }
 
