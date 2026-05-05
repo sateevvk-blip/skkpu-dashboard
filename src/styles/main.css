@@ -132,17 +132,51 @@ body {
 .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
 .g3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; margin-bottom: 14px; }
 .mt14 { margin-top: 14px; }
+
+/* ── KPI Cards — glassmorphism (#38, fix #41) ── */
 .kpi {
-  background: #fff; border: 1px solid var(--border);
-  border-left: 4px solid; border-radius: 14px; padding: 14px 16px;
+  border-radius: 12px;
+  padding: 14px 16px;
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
 }
 .kpi .kl { font-size: 11px; color: var(--muted); line-height: 1.35; margin-bottom: 6px; }
 .kpi .kv { font-size: 28px; font-weight: 900; line-height: 1; }
 .kpi .kd { font-size: 11px; margin-top: 5px; }
-.kpi.red    { border-left-color: var(--red); }
-.kpi.yellow { border-left-color: var(--yellow); }
-.kpi.green  { border-left-color: var(--green); }
-.kpi.blue   { border-left-color: var(--primary); }
+
+.kpi.red {
+  background: linear-gradient(135deg,
+    rgba(239, 68, 68, 0.22),
+    rgba(239, 68, 68, 0.08));
+  box-shadow:
+    0 4px 24px rgba(239, 68, 68, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.kpi.yellow {
+  background: linear-gradient(135deg,
+    rgba(245, 158, 11, 0.22),
+    rgba(245, 158, 11, 0.08));
+  box-shadow:
+    0 4px 24px rgba(245, 158, 11, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.kpi.green {
+  background: linear-gradient(135deg,
+    rgba(34, 197, 94, 0.22),
+    rgba(34, 197, 94, 0.08));
+  box-shadow:
+    0 4px 24px rgba(34, 197, 94, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.kpi.blue {
+  background: linear-gradient(135deg,
+    rgba(59, 130, 246, 0.22),
+    rgba(59, 130, 246, 0.08));
+  box-shadow:
+    0 4px 24px rgba(59, 130, 246, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
 
 /* ── Tabs ── */
 .tabs { display: flex; gap: 3px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
