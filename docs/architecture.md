@@ -246,3 +246,39 @@ data/organizations.json
 Помимо KPI-виджетов, `renderOrg` также строит:
 - **Таблицу сотрудников** `#tb-teachers` — из `AppState('employees')` (`data/teachers.json`), фильтр по `orgId` + `districtId`.
 - **4 графика ECharts**: распределение ЗП (`ch-orgSal`), структура нагрузки (`ch-orgLoad`), вид образования (`ch-orgEduType`), категории персонала (`ch-orgStaffCat`).
+
+
+1. DataService — src/services/data-service.js
+  
+  Единая точка загрузки данных. DataService.loadAll() параллельно загружает 4 JSON-файла (districts,
+  organizations, teachers, geo) и помещает их в AppState. Это первое, что вызывает app.js при старте.
+
+  2. AppState — src/store/state.js
+
+  Единая шина данных вместо window._* глобалов (решение из Issue #3). Хранит все загруженные данные и
+  является точкой синхронизации между модулями. 19 входящих рёбер — один из самых связанных узлов.
+
+  3. navigation.js — src/scripts/navigation.js
+
+  Трёхуровневая навигация: МО → ГО → Организация. Функции: showPage(), openDistrict(), moTab(). moTab() —
+  бог-узел с 20 рёбрами: именно он переключает вкладки и запускает нужные рендер-функции.
+
+  4. Группа чартов
+
+  - charts-mo.js — таблицы рейтинга округов, зарплаты, субвенции (renderMoSal, renderMoSub, renderMoProb)
+  - charts-hr.js — кадровые показатели: текучесть, возраст, стаж, укомплектованность (renderMoHr*)
+  - charts-buildings.js — здания и дошкольные группы (renderMoBld, renderMoBldKinder)
+
+  5. normalize.js / format.js — src/utils/
+
+  Утилиты нижнего уровня. normalize.js: нормализация имён округов, padStart(4,'0') для orgId (Issue #7).
+  format.js: форматирование значений, цветовые зоны (colorBuildingLoad, colorTurnover, colorStaffing).
+
+  6. map.js — src/scripts/map.js
+
+  Интерактивная карта МО. filterMap() и setMetric() работают с AppState и geo.json для отображения метрик
+  по округам.
+
+  ---
+  Архитектурный поток: app.js → DataService.loadAll() → AppState → navigation.js (moTab) → рендер-функции
+  → DOM.
