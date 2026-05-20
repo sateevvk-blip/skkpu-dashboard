@@ -4,38 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>СККПУ · Дашборд · v2.0.2</title>
-
 <!-- Vendor styles -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
 <!-- Application styles -->
 <link rel="stylesheet" href="src/styles/main.css"/>
 <link rel="stylesheet" href="src/styles/mobile.css"/>
-
-<style>
-/* ── AppIcon базовые стили ── */
-.app-icon {
-  display: inline-block;
-  vertical-align: middle;
-  flex-shrink: 0;
-  color: currentColor;
-  stroke: currentColor;
-}
-.hdr-tab .app-icon,
-.mob-tab .app-icon {
-  display: block;
-  margin: 0 auto 2px;
-}
-</style>
-
+<!-- Issue #43: desktop layout — KPI panel beside map -->
+<link rel="stylesheet" href="src/styles/layout-mo.css"/>
 <!-- Vendor scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 </head>
 <body>
-
 <div id="toast"></div>
-
 <div class="shell">
 
 <!-- ═══ HEADER ═══ -->
@@ -63,393 +44,409 @@
   </div>
   <!-- Section tabs -->
   <div class="hdr-tabs" id="hdrTabs">
-    <div class="hdr-tab active" id="ht-map" onclick="moTab('map')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-map"/></svg>
-      Карта округов
-    </div>
-    <div class="hdr-tab" id="ht-sal" onclick="moTab('sal')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-salary"/></svg>
-      Анализ ЗП
-    </div>
-    <div class="hdr-tab" id="ht-sub" onclick="moTab('sub')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-subvention"/></svg>
-      Субвенция
-    </div>
-    <div class="hdr-tab" id="ht-hr" onclick="moTab('hr')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-people"/></svg>
-      Кадры
-    </div>
-    <div class="hdr-tab" id="ht-bld" onclick="moTab('bld')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-building"/></svg>
-      Здания
-    </div>
-    <div class="hdr-tab" id="ht-prb" onclick="moTab('prb')">
-      <svg class="app-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-warning"/></svg>
-      Проблемы
-    </div>
+    <div class="hdr-tab active" id="ht-map" onclick="moTab('map')">🗺 Карта округов</div>
+    <div class="hdr-tab" id="ht-sal" onclick="moTab('sal')">💰 Анализ ЗП</div>
+    <div class="hdr-tab" id="ht-sub" onclick="moTab('sub')">📊 Субвенция</div>
+    <div class="hdr-tab" id="ht-hr" onclick="moTab('hr')">👥 Кадры</div>
+    <div class="hdr-tab" id="ht-bld" onclick="moTab('bld')">🏫 Здания</div>
+    <div class="hdr-tab" id="ht-prb" onclick="moTab('prb')">⚠️ Проблемы</div>
   </div>
 </header>
 
 <!-- ═══ MAIN ═══ -->
 <div class="body">
-<main class="main">
+  <main class="main">
 
-<!-- ══ СТРАНИЦА МО ══ -->
-<div class="page active" id="page-mo">
-  <div class="page-head">
-    <div>
-      <div class="page-title" id="moTitle">СККПУ Дашборд</div>
-      <div class="page-sub" id="moSub">Московская область · сводный дашборд · данные на 30.03.2026</div>
-    </div>
-    <span class="period">2025–2026 уч. год</span>
-  </div>
-
-  <div class="g4" id="moKpis">
-    <div class="kpi red"><div class="kl">Округа в красной зоне</div><div class="kv" style="color:var(--red)">7</div><div class="kd" style="color:var(--red)">Требуется вмешательство</div></div>
-    <div class="kpi yellow"><div class="kl">Округа в жёлтой зоне</div><div class="kv" style="color:var(--yellow)">16</div><div class="kd" style="color:#d97706">Нужен локальный контроль</div></div>
-    <div class="kpi green"><div class="kl">Округа в зелёной зоне</div><div class="kv" style="color:var(--green)">37</div><div class="kd" style="color:var(--green)">Стабильная ситуация</div></div>
-    <div class="kpi blue"><div class="kl">Средняя ЗП педагога по МО</div><div class="kv" style="color:var(--primary)">74 850</div><div class="kd" style="color:var(--green)">▲ +3 200 ₽ к прошлому году</div></div>
-  </div>
-
-  <!-- Карта -->
-  <div class="tabpane active" id="moPane-map">
-    <div class="card" style="padding:12px 14px">
-      <div class="card-title" style="margin-bottom:6px">Карта МО по городским округам</div>
-      <div class="card-sub" style="margin-bottom:10px">Клик по сегменту открывает уровень городского округа</div>
-      <div class="map-wrap">
-        <div id="map"></div>
-        <div class="map-filters">
-          <div class="mf-label">Фильтр</div>
-          <button class="mf-btn" onclick="filterMap('r',this)">🔴 Критичные</button>
-          <button class="mf-btn" onclick="filterMap('y',this)">🟡 Внимание</button>
-          <button class="mf-btn" onclick="filterMap('g',this)">🟢 Стабильные</button>
-          <button class="mf-btn" onclick="filterMap('',this)">↩ Все</button>
+    <!-- ══ СТРАНИЦА МО ══ -->
+    <div class="page active" id="page-mo">
+      <div class="page-head">
+        <div>
+          <div class="page-title" id="moTitle">СККПУ Дашборд</div>
+          <div class="page-sub" id="moSub">Московская область · сводный дашборд · данные на 30.03.2026</div>
         </div>
-        <div class="map-metrics">
-          <div class="mf-label">Метрика</div>
-          <button class="mf-btn active" onclick="setMetric('zp',this)">Средняя ЗП</button>
-          <button class="mf-btn" onclick="setMetric('ahr',this)">АХР / пед.</button>
-          <button class="mf-btn" onclick="setMetric('cap',this)">Комплектация</button>
-          <button class="mf-btn" onclick="setMetric('ext',this)">Внеурочка</button>
-          <button class="mf-btn" onclick="setMetric('bload',this)">Загрузка зданий</button>
-          <button class="mf-btn" onclick="setMetric('staffing',this)">Укомплект-ть</button>
-          <button class="mf-btn" onclick="setMetric('turnover',this)">Текучесть</button>
+        <span class="period">2025–2026 уч. год</span>
+      </div>
+
+      <!-- ══ Issue #43: обёртка для раскладки KPI + карта на десктопе ══
+           .mo-overview-layout — CSS-grid-контейнер (см. layout-mo.css):
+             левая колонка (.mo-kpi-panel) — KPI-карточки (2×2)
+             правая колонка — карта МО
+           На мобильных и при неактивной вкладке «Карта» layout остаётся
+           вертикальным (progressive enhancement через :has()).            -->
+      <div class="mo-overview-layout">
+
+        <div class="mo-kpi-panel">
+          <div class="g4" id="moKpis">
+            <div class="kpi red"><div class="kl">Округа в красной зоне</div><div class="kv" style="color:var(--red)">7</div><div class="kd" style="color:var(--red)">Требуется вмешательство</div></div>
+            <div class="kpi yellow"><div class="kl">Округа в жёлтой зоне</div><div class="kv" style="color:var(--yellow)">16</div><div class="kd" style="color:#d97706">Нужен локальный контроль</div></div>
+            <div class="kpi green"><div class="kl">Округа в зелёной зоне</div><div class="kv" style="color:var(--green)">37</div><div class="kd" style="color:var(--green)">Стабильная ситуация</div></div>
+            <div class="kpi blue"><div class="kl">Средняя ЗП педагога по МО</div><div class="kv" style="color:var(--primary)">74 850</div><div class="kd" style="color:var(--green)">▲ +3 200 ₽ к прошлому году</div></div>
+          </div>
         </div>
-        <div class="map-legend">
-          <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
-          <div class="leg"><span class="sw" style="background:#f59e0b"></span>Внимание</div>
-          <div class="leg"><span class="sw" style="background:#10b981"></span>Норма</div>
+
+        <!-- Карта -->
+        <div class="tabpane active" id="moPane-map">
+          <div class="card" style="padding:12px 14px">
+            <div class="card-title" style="margin-bottom:6px">Карта МО по городским округам</div>
+            <div class="card-sub" style="margin-bottom:10px">Клик по сегменту открывает уровень городского округа</div>
+            <div class="map-wrap">
+              <div id="map"></div>
+              <div class="map-filters">
+                <div class="mf-label">Фильтр</div>
+                <button class="mf-btn" onclick="filterMap('r',this)">🔴 Критичные</button>
+                <button class="mf-btn" onclick="filterMap('y',this)">🟡 Внимание</button>
+                <button class="mf-btn" onclick="filterMap('g',this)">🟢 Стабильные</button>
+                <button class="mf-btn" onclick="filterMap('',this)">↩ Все</button>
+              </div>
+              <div class="map-metrics">
+                <div class="mf-label">Метрика</div>
+                <button class="mf-btn active" onclick="setMetric('zp',this)">Средняя ЗП</button>
+                <button class="mf-btn" onclick="setMetric('ahr',this)">АХР / пед.</button>
+                <button class="mf-btn" onclick="setMetric('cap',this)">Комплектация</button>
+                <button class="mf-btn" onclick="setMetric('ext',this)">Внеурочка</button>
+                <button class="mf-btn" onclick="setMetric('bload',this)">Загрузка зданий</button>
+                <button class="mf-btn" onclick="setMetric('staffing',this)">Укомплект-ть</button>
+                <button class="mf-btn" onclick="setMetric('turnover',this)">Текучесть</button>
+              </div>
+              <div class="map-legend">
+                <div class="leg"><span class="sw" style="background:#ef4444"></span>Критично</div>
+                <div class="leg"><span class="sw" style="background:#f59e0b"></span>Внимание</div>
+                <div class="leg"><span class="sw" style="background:#10b981"></span>Норма</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /mo-overview-layout -->
+
+      <!-- Анализ ЗП -->
+      <div class="tabpane" id="moPane-sal">
+        <div class="g3">
+          <div class="card">
+            <div class="card-title">Распределение педагогов по уровню ЗП</div>
+            <div class="card-sub">Количество педагогов в каждом диапазоне</div>
+            <div id="ch-salDist" style="height:280px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Достижение целевого уровня</div>
+            <div class="card-sub">74 500 ₽ = целевой уровень МО</div>
+            <div id="ch-gauge" style="height:280px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">ЗП по категориям работников</div>
+          <div class="card-sub">Сравнение с целевыми уровнями: дошкольное ≥88 372 ₽, общее ≥90 814 ₽, доп. ≥101 081 ₽</div>
+          <div id="ch-salCat" style="height:280px"></div>
+        </div>
+        <div class="card mt14">
+          <div class="card-title">Рейтинг округов по средней ЗП</div>
+          <div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО. Клик по заголовку колонки — сортировка.</div>
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead id="tb-districts-head"><tr>
+                <th data-col="name">Округ</th>
+                <th data-col="zp">Ср. ЗП</th>
+                <th data-col="diff">Отклонение</th>
+                <th data-col="ahr">АХР%</th>
+                <th data-col="cap">Компл.</th>
+                <th data-col="status">Статус</th>
+              </tr></thead>
+              <tbody id="tb-districts"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Анализ ЗП -->
-  <div class="tabpane" id="moPane-sal">
-    <div class="g3">
-      <div class="card">
-        <div class="card-title">Распределение педагогов по уровню ЗП</div>
-        <div class="card-sub">Количество педагогов в каждом диапазоне</div>
-        <div id="ch-salDist" style="height:280px"></div>
+      <!-- Субвенция -->
+      <div class="tabpane" id="moPane-sub">
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">Структура ФОТ по субвенции</div>
+            <div class="card-sub">млн ₽ за текущий период</div>
+            <div id="ch-wf" style="height:300px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Исполнение субвенции по округам</div>
+            <div class="card-sub">Норматив ≥ 85%</div>
+            <div id="ch-subBar" style="height:300px"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">Тарификация: дошкольное vs общее</div>
+            <div class="card-sub">Объём тарификации в год, млн ₽</div>
+            <div id="ch-tarif" style="height:260px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Субвенция: план vs факт по видам</div>
+            <div class="card-sub">Дошкольное и общее отдельно</div>
+            <div id="ch-subPlanFact" style="height:260px"></div>
+          </div>
+        </div>
+        <div class="card mt14">
+          <div class="card-title">Динамика план / факт</div>
+          <div class="card-sub">Нарастающим итогом, млн ₽</div>
+          <div id="ch-subLine" style="height:220px"></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Достижение целевого уровня</div>
-        <div class="card-sub">74 500 ₽ = целевой уровень МО</div>
-        <div id="ch-gauge" style="height:280px"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">ЗП по категориям работников</div>
-      <div class="card-sub">Сравнение с целевыми уровнями: дошкольное ≥88 372 ₽, общее ≥90 814 ₽, доп. ≥101 081 ₽</div>
-      <div id="ch-salCat" style="height:280px"></div>
-    </div>
-    <div class="card mt14">
-      <div class="card-title">Рейтинг округов по средней ЗП</div>
-      <div class="card-sub">Красные строки — ниже цели. Клик по строке → уровень ГО. Клик по заголовку колонки — сортировка.</div>
-      <div class="tbl-wrap">
-        <table class="tbl">
-          <thead id="tb-districts-head"><tr>
-            <th data-col="name">Округ</th>
-            <th data-col="zp">Ср. ЗП</th>
-            <th data-col="diff">Отклонение</th>
-            <th data-col="ahr">АХР%</th>
-            <th data-col="cap">Компл.</th>
-            <th data-col="status">Статус</th>
-          </tr></thead>
-          <tbody id="tb-districts"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 
-  <!-- Субвенция -->
-  <div class="tabpane" id="moPane-sub">
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Структура ФОТ по субвенции</div>
-        <div class="card-sub">млн ₽ за текущий период</div>
-        <div id="ch-wf" style="height:300px"></div>
+      <!-- Кадры -->
+      <div class="tabpane" id="moPane-hr">
+        <div class="g3">
+          <div class="card">
+            <div class="card-title">Укомплектованность педагогами</div>
+            <div class="card-sub">% от штатного расписания</div>
+            <div id="ch-hrStaffing" style="height:280px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Средний возраст педагогов</div>
+            <div class="card-sub">&lt;35 жёлтый, 35–50 зелёный, 50+ красный</div>
+            <div id="ch-hrAge" style="height:280px"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">Текучесть кадров по округам</div>
+            <div class="card-sub">Норматив ≤ 7% · Топ-12</div>
+            <div id="ch-hrTurnover" style="height:320px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Средний стаж работы</div>
+            <div class="card-sub">&lt;3 лет красный, 3–6 жёлтый, 7+ зелёный</div>
+            <div id="ch-hrExp" style="height:320px"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">% уволившихся по периодам</div>
+            <div class="card-sub">Испытательный срок / 6 месяцев / год</div>
+            <div id="ch-hrFired" style="height:280px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Средний срок закрытия вакансии</div>
+            <div class="card-sub">&lt;1.5 мес зелёный, 1.5–2 жёлтый, &gt;2 красный</div>
+            <div id="ch-hrVacancy" style="height:280px"></div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Исполнение субвенции по округам</div>
-        <div class="card-sub">Норматив ≥ 85%</div>
-        <div id="ch-subBar" style="height:300px"></div>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Тарификация: дошкольное vs общее</div>
-        <div class="card-sub">Объём тарификации в год, млн ₽</div>
-        <div id="ch-tarif" style="height:260px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Субвенция: план vs факт по видам</div>
-        <div class="card-sub">Дошкольное и общее отдельно</div>
-        <div id="ch-subPlanFact" style="height:260px"></div>
-      </div>
-    </div>
-    <div class="card mt14">
-      <div class="card-title">Динамика план / факт</div>
-      <div class="card-sub">Нарастающим итогом, млн ₽</div>
-      <div id="ch-subLine" style="height:220px"></div>
-    </div>
-  </div>
 
-  <!-- Кадры -->
-  <div class="tabpane" id="moPane-hr">
-    <div class="g3">
-      <div class="card">
-        <div class="card-title">Укомплектованность педагогами</div>
-        <div class="card-sub">% от штатного расписания</div>
-        <div id="ch-hrStaffing" style="height:280px"></div>
+      <!-- Здания и классы -->
+      <div class="tabpane" id="moPane-bld">
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">Загрузка зданий по округам</div>
+            <div class="card-sub">&lt;50% красный, 51–79% жёлтый, 80%+ зелёный</div>
+            <div id="ch-bldLoad" style="height:320px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Количество зданий по округам</div>
+            <div class="card-sub">Учебные корпуса</div>
+            <div id="ch-bldCount" style="height:320px"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Наполняемость по классам 1–11</div>
+          <div class="card-sub">Среднее кол-во учеников в классе. ≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
+          <div id="ch-bldClasses" style="height:300px"></div>
+        </div>
+        <div class="g2 mt14">
+          <div class="card">
+            <div class="card-title">Дошкольные группы по округам</div>
+            <div class="card-sub">Количество групп и средняя наполняемость</div>
+            <div id="ch-bldKinder" style="height:280px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Наполняемость дошкольных групп</div>
+            <div class="card-sub">≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
+            <div id="ch-bldKinderCap" style="height:280px"></div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Средний возраст педагогов</div>
-        <div class="card-sub">&lt;35 жёлтый, 35–50 зелёный, 50+ красный</div>
-        <div id="ch-hrAge" style="height:280px"></div>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Текучесть кадров по округам</div>
-        <div class="card-sub">Норматив ≤ 7% · Топ-12</div>
-        <div id="ch-hrTurnover" style="height:320px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Средний стаж работы</div>
-        <div class="card-sub">&lt;3 лет красный, 3–6 жёлтый, 7+ зелёный</div>
-        <div id="ch-hrExp" style="height:320px"></div>
-      </div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">% уволившихся по периодам</div>
-        <div class="card-sub">Испытательный срок / 6 месяцев / год</div>
-        <div id="ch-hrFired" style="height:280px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Средний срок закрытия вакансии</div>
-        <div class="card-sub">&lt;1.5 мес зелёный, 1.5–2 жёлтый, &gt;2 красный</div>
-        <div id="ch-hrVacancy" style="height:280px"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Здания и классы -->
-  <div class="tabpane" id="moPane-bld">
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Загрузка зданий по округам</div>
-        <div class="card-sub">&lt;50% красный, 51–79% жёлтый, 80%+ зелёный</div>
-        <div id="ch-bldLoad" style="height:320px"></div>
+      <!-- Проблемы -->
+      <div class="tabpane" id="moPane-prb">
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">АХР / педагогический состав</div>
+            <div class="card-sub">Норматив ≤ 35% · Топ-12</div>
+            <div id="ch-ahr" style="height:320px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Комплектация классов</div>
+            <div class="card-sub">Норматив ≥ 70% · Топ-12 низких</div>
+            <div id="ch-cap" style="height:320px"></div>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <div class="card-title">Внеурочная деятельность</div>
+            <div class="card-sub">Флаг риска > 30% от ФОТ педагога</div>
+            <div id="ch-ext" style="height:240px"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Низкая укомплектованность кадрами</div>
+            <div class="card-sub">Топ-12 округов с низкой укомплектованностью</div>
+            <div id="ch-prbStaff" style="height:240px"></div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Количество зданий по округам</div>
-        <div class="card-sub">Учебные корпуса</div>
-        <div id="ch-bldCount" style="height:320px"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Наполняемость по классам 1–11</div>
-      <div class="card-sub">Среднее кол-во учеников в классе. ≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
-      <div id="ch-bldClasses" style="height:300px"></div>
-    </div>
-    <div class="g2 mt14">
-      <div class="card">
-        <div class="card-title">Дошкольные группы по округам</div>
-        <div class="card-sub">Количество групп и средняя наполняемость</div>
-        <div id="ch-bldKinder" style="height:280px"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Наполняемость дошкольных групп</div>
-        <div class="card-sub">≤19 красный, 20–24 жёлтый, 25+ зелёный</div>
-        <div id="ch-bldKinderCap" style="height:280px"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Проблемы -->
-  <div class="tabpane" id="moPane-prb">
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">АХР / педагогический состав</div>
-        <div class="card-sub">Норматив ≤ 35% · Топ-12</div>
-        <div id="ch-ahr" style="height:320px"></div>
+    </div><!-- /page-mo -->
+
+    <!-- ══ СТРАНИЦА ГО ══ -->
+    <div class="page" id="page-go">
+      <div class="page-head">
+        <div>
+          <div class="page-title" id="go-title">Городской округ</div>
+          <div class="page-sub">Уровень ГО · список организаций и локальная аналитика</div>
+        </div>
+        <button class="btn btn-outline" onclick="goMo()">← К карте МО</button>
       </div>
-      <div class="card">
-        <div class="card-title">Комплектация классов</div>
-        <div class="card-sub">Норматив ≥ 70% · Топ-12 низких</div>
-        <div id="ch-cap" style="height:320px"></div>
+      <div class="go-banner">
+        <div>
+          <div class="b1">Городской округ</div>
+          <div class="b2" id="go-bname">—</div>
+          <div class="b3" id="go-bmeta">—</div>
+        </div>
+        <div class="go-stat" id="go-bstat">—</div>
       </div>
-    </div>
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Внеурочная деятельность</div>
-        <div class="card-sub">Флаг риска > 30% от ФОТ педагога</div>
-        <div id="ch-ext" style="height:240px"></div>
+      <div class="g4" id="go-kpis"></div>
+      <div class="g4" id="go-kpis2"></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">Причины отклонений</div>
+          <div class="card-sub">Ключевые факторы, влияющие на показатели округа</div>
+          <div id="go-insights"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Средняя ЗП по организациям</div>
+          <div class="card-sub">Сравнение с целевым уровнем 74 500 ₽</div>
+          <div id="ch-goSalBar" style="height:240px"></div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-title">Низкая укомплектованность кадрами</div>
-        <div class="card-sub">Топ-12 округов с низкой укомплектованностью</div>
-        <div id="ch-prbStaff" style="height:240px"></div>
+      <div class="card mt14">
+        <div class="card-title">Организации округа</div>
+        <div class="card-sub">Клик по строке → страница уровня организации</div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th>ID</th><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Здания</th><th>Загр.%</th><th>Укомпл.%</th><th>Текуч.%</th><th>Статус</th></tr></thead>
+            <tbody id="tb-orgs"></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </div>
-</div><!-- /page-mo -->
+    </div><!-- /page-go -->
 
+    <!-- ══ СТРАНИЦА ОРГ ══ -->
+    <div class="page" id="page-org">
+      <div class="page-head">
+        <div>
+          <div class="page-title" id="org-title">Организация</div>
+          <div class="page-sub" id="org-sub">Уровень организации · причины отклонений</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline" onclick="goDistrict()">← К округу</button>
+          <button class="btn btn-outline" onclick="goMo()">↖ К карте МО</button>
+        </div>
+      </div>
+      <div class="org-hdr">
+        <div class="org-name" id="org-name">—</div>
+        <div class="org-meta" id="org-meta"></div>
+        <div class="org-id-badge" id="org-id-badge" style="font-size:0.75rem;color:var(--color-text-muted,#888);margin-top:4px;font-family:monospace"></div>
+        <div class="org-status" id="org-status">—</div>
+      </div>
+      <!-- FIX issue #6 баг 2: блок KPI для уровня Орг -->
+      <div class="g4" id="org-kpis"></div>
+      <div class="prow" id="org-problems"></div>
+      <div id="org-insights"></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-title">Распределение ЗП педагогов</div>
+          <div class="card-sub">Относительно целевого уровня 74 500 ₽</div>
+          <div id="ch-orgSal" style="height:240px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Структура нагрузки</div>
+          <div class="card-sub">Основная / совмещение / внеурочная деятельность</div>
+          <div id="ch-orgLoad" style="height:240px"></div>
+        </div>
+      </div>
+      <div class="g2 mt14">
+        <div class="card">
+          <div class="card-title">По виду образования</div>
+          <div class="card-sub">Распределение сотрудников</div>
+          <div id="ch-orgEduType" style="height:240px"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">По категории должности</div>
+          <div class="card-sub">Педагоги / руководство / прочие</div>
+          <div id="ch-orgStaffCat" style="height:240px"></div>
+        </div>
+      </div>
+      <div class="card mt14">
+        <div class="card-title">Сотрудники организации</div>
+        <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
+        <div class="tbl-wrap">
+          <!-- fix(#13): id="tb-teachers" на <table> — org.js делает getElementById('tb-teachers')
+               затем querySelector('tbody'). class="tbl-teachers" используется в CSS для
+               table-layout: fixed (свойство работает только на <table>, не на <tbody>).
+               <colgroup> фиксирует ширины колонок — работает в паре с table-layout: fixed.
+               Без явных ширин браузер независимо пересчитывает <thead> и <tbody>,
+               что даёт визуальное смещение шапки. -->
+          <table id="tb-teachers" class="tbl tbl-teachers">
+            <colgroup>
+              <col style="width:70px">  <!-- ID -->
+              <col style="width:200px"> <!-- ФИО -->
+              <col style="width:100px"> <!-- Вид обр. -->
+              <col style="width:130px"> <!-- Категория -->
+              <col style="width:160px"> <!-- Должность -->
+              <col style="width:80px">  <!-- Тип -->
+              <col style="width:90px">  <!-- Нагрузка -->
+              <col style="width:80px">  <!-- Ставка -->
+              <col style="width:110px"> <!-- Предмет -->
+              <col style="width:70px">  <!-- Класс -->
+              <col style="width:70px">  <!-- Напол. -->
+              <col style="width:80px">  <!-- Часы/нед -->
+              <col style="width:90px">  <!-- ЗП -->
+              <col style="width:60px">  <!-- Статус -->
+            </colgroup>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>ФИО</th>
+                <th>Вид обр.</th>
+                <th>Категория</th>
+                <th>Должность</th>
+                <th>Тип</th>
+                <th>Нагрузка</th>
+                <th>Ставка</th>
+                <th>Предмет</th>
+                <th>Класс</th>
+                <th>Напол.</th>
+                <th>Часы/нед</th>
+                <th>ЗП</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /page-org -->
 
-<!-- ══ СТРАНИЦА ГО ══ -->
-<div class="page" id="page-go">
-  <div class="page-head">
-    <div>
-      <div class="page-title" id="go-title">Городской округ</div>
-      <div class="page-sub">Уровень ГО · список организаций и локальная аналитика</div>
-    </div>
-    <button class="btn btn-outline" onclick="goMo()">← К карте МО</button>
-  </div>
-  <div class="go-banner">
-    <div>
-      <div class="b1">Городской округ</div>
-      <div class="b2" id="go-bname">—</div>
-      <div class="b3" id="go-bmeta">—</div>
-    </div>
-    <div class="go-stat" id="go-bstat">—</div>
-  </div>
-  <div class="g4" id="go-kpis"></div>
-  <div class="g4" id="go-kpis2"></div>
-  <div class="g2">
-    <div class="card">
-      <div class="card-title">Причины отклонений</div>
-      <div class="card-sub">Ключевые факторы, влияющие на показатели округа</div>
-      <div id="go-insights"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Средняя ЗП по организациям</div>
-      <div class="card-sub">Сравнение с целевым уровнем 74 500 ₽</div>
-      <div id="ch-goSalBar" style="height:240px"></div>
-    </div>
-  </div>
-  <div class="card mt14">
-    <div class="card-title">Организации округа</div>
-    <div class="card-sub">Клик по строке → страница уровня организации</div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>ID</th><th>Организация</th><th>Тип</th><th>Ср. ЗП</th><th>Ниже цели</th><th>АХР%</th><th>Компл.</th><th>Здания</th><th>Загр.%</th><th>Укомпл.%</th><th>Текуч.%</th><th>Статус</th></tr></thead>
-        <tbody id="tb-orgs"></tbody>
-      </table>
-    </div>
-  </div>
-</div><!-- /page-go -->
-
-
-<!-- ══ СТРАНИЦА ОРГ ══ -->
-<div class="page" id="page-org">
-  <div class="page-head">
-    <div>
-      <div class="page-title" id="org-title">Организация</div>
-      <div class="page-sub" id="org-sub">Уровень организации · причины отклонений</div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-outline" onclick="goDistrict()">← К округу</button>
-      <button class="btn btn-outline" onclick="goMo()">↖ К карте МО</button>
-    </div>
-  </div>
-  <div class="org-hdr">
-    <div class="org-name" id="org-name">—</div>
-    <div class="org-meta" id="org-meta"></div>
-    <div class="org-id-badge" id="org-id-badge" style="font-size:0.75rem;color:var(--color-text-muted,#888);margin-top:4px;font-family:monospace"></div>
-    <div class="org-status" id="org-status">—</div>
-  </div>
-  <div class="g4" id="org-kpis"></div>
-  <div class="prow" id="org-problems"></div>
-  <div id="org-insights"></div>
-  <div class="g2">
-    <div class="card">
-      <div class="card-title">Распределение ЗП педагогов</div>
-      <div class="card-sub">Относительно целевого уровня 74 500 ₽</div>
-      <div id="ch-orgSal" style="height:240px"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Структура нагрузки</div>
-      <div class="card-sub">Основная / совмещение / внеурочная деятельность</div>
-      <div id="ch-orgLoad" style="height:240px"></div>
-    </div>
-  </div>
-  <div class="g2 mt14">
-    <div class="card">
-      <div class="card-title">По виду образования</div>
-      <div class="card-sub">Распределение сотрудников</div>
-      <div id="ch-orgEduType" style="height:240px"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">По категории должности</div>
-      <div class="card-sub">Педагоги / руководство / прочие</div>
-      <div id="ch-orgStaffCat" style="height:240px"></div>
-    </div>
-  </div>
-  <div class="card mt14">
-    <div class="card-title">Сотрудники организации</div>
-    <div class="card-sub">Детализация по сотрудникам. Красный фон — ЗП ниже целевого уровня</div>
-    <div class="tbl-wrap">
-      <table id="tb-teachers" class="tbl tbl-teachers">
-        <colgroup>
-          <col style="width:70px">
-          <col style="width:200px">
-          <col style="width:100px">
-          <col style="width:130px">
-          <col style="width:160px">
-          <col style="width:80px">
-          <col style="width:90px">
-          <col style="width:80px">
-          <col style="width:110px">
-          <col style="width:70px">
-          <col style="width:70px">
-          <col style="width:80px">
-          <col style="width:90px">
-          <col style="width:60px">
-        </colgroup>
-        <thead>
-          <tr>
-            <th>ID</th><th>ФИО</th><th>Вид обр.</th><th>Категория</th><th>Должность</th>
-            <th>Тип</th><th>Нагрузка</th><th>Ставка</th><th>Предмет</th><th>Класс</th>
-            <th>Напол.</th><th>Часы/нед</th><th>ЗП</th><th>Статус</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-</div><!-- /page-org -->
-
-</main>
+  </main>
 </div><!-- /body -->
+
 </div><!-- /shell -->
 
 <!-- Application scripts — порядок важен -->
+<!-- 1. Стор данных: должен быть первым, до всех остальных модулей -->
 <script src="src/store/state.js"></script>
+<!-- 2. Утилиты: форматирование и нормализация -->
 <script src="src/utils/format.js"></script>
 <script src="src/utils/normalize.js"></script>
+<!-- 3. Сервисы: DataService использует AppState -->
 <script src="src/services/data-service.js"></script>
+<!-- 4. UI-модули: используют AppState и DataService -->
 <script src="src/scripts/toast.js"></script>
 <script src="src/scripts/navigation.js"></script>
 <script src="src/scripts/map.js"></script>
@@ -458,41 +455,28 @@
 <script src="src/scripts/charts-mo.js"></script>
 <script src="src/scripts/charts-hr.js"></script>
 <script src="src/scripts/charts-buildings.js"></script>
-<!-- icons.js — до app.js, экспортирует window.appIcon -->
-<script src="src/scripts/icons.js"></script>
+<!-- 5. Точка входа: запускается последней -->
 <script src="src/scripts/app.js"></script>
 
 <!-- Mobile bottom nav -->
 <div class="mob-nav" id="mobNav">
   <button class="mob-tab active" id="mnt-map" onclick="moTabMob('map')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-map"/></svg>
-    </span>Карта
+    <span class="m-ico">🗺</span>Карта
   </button>
   <button class="mob-tab" id="mnt-sal" onclick="moTabMob('sal')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-salary"/></svg>
-    </span>ЗП
+    <span class="m-ico">💰</span>ЗП
   </button>
   <button class="mob-tab" id="mnt-sub" onclick="moTabMob('sub')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-subvention"/></svg>
-    </span>Субвенция
+    <span class="m-ico">📊</span>Субвенция
   </button>
   <button class="mob-tab" id="mnt-hr" onclick="moTabMob('hr')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-people"/></svg>
-    </span>Кадры
+    <span class="m-ico">👥</span>Кадры
   </button>
   <button class="mob-tab" id="mnt-bld" onclick="moTabMob('bld')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-building"/></svg>
-    </span>Здания
+    <span class="m-ico">🏫</span>Здания
   </button>
   <button class="mob-tab" id="mnt-prb" onclick="moTabMob('prb')">
-    <span class="m-ico">
-      <svg class="app-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-warning"/></svg>
-    </span>Проблемы
+    <span class="m-ico">⚠️</span>Проблемы
   </button>
 </div>
 
